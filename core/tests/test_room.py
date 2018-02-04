@@ -1,0 +1,48 @@
+import unittest
+from core.edge import Edge, EdgeFactory, Orientation
+from core.room import Room
+
+class RoomTestCase(unittest.TestCase):
+
+    def test_find_nearest_edge_0(self):
+        room = Room([EdgeFactory.create_edge(0, 0, 0, 5)], [])
+
+        edgesA = room.find_nearest_edge_in_positive(Orientation.Vertical, -5, 3)
+        edgesB = room.find_nearest_edge_in_negative(Orientation.Vertical, -5, 3)
+        edgesC = room.find_nearest_edge_in_positive(Orientation.Horizontal, -5, 3)
+        edgesD = room.find_nearest_edge_in_negative(Orientation.Horizontal, -5, 3)
+
+        self.assertEqual(1, len(edgesA))
+        self.assertEqual(0, len(edgesB))
+        self.assertEqual(0, len(edgesC))
+        self.assertEqual(0, len(edgesD))
+
+    def test_find_nearest_edge_1(self):
+        room = Room([EdgeFactory.create_edge(0, 0, 5, 0)], [])
+
+        edgesA = room.find_nearest_edge_in_positive(Orientation.Vertical, 3, 5)
+        edgesB = room.find_nearest_edge_in_negative(Orientation.Vertical, 3, 5)
+        edgesC = room.find_nearest_edge_in_positive(Orientation.Horizontal, 3, 5)
+        edgesD = room.find_nearest_edge_in_negative(Orientation.Horizontal, 3, 5)
+
+        self.assertEqual(0, len(edgesA))
+        self.assertEqual(0, len(edgesB))
+        self.assertEqual(0, len(edgesC))
+        self.assertEqual(1, len(edgesD))
+
+    def test_find_nearest_edge_2(self):
+        edges = [
+            EdgeFactory.create_edge(0, 0, 0, 5),
+            EdgeFactory.create_edge(0, 5, 0, 10)
+        ]
+        room = Room(edges, [])
+
+        edgesA = room.find_nearest_edge_in_positive(Orientation.Vertical, 5, 5)
+        edgesB = room.find_nearest_edge_in_negative(Orientation.Vertical, 5, 5)
+        edgesC = room.find_nearest_edge_in_positive(Orientation.Horizontal, 5, 5)
+        edgesD = room.find_nearest_edge_in_negative(Orientation.Horizontal, 5, 5)
+
+        self.assertEqual(0, len(edgesA))
+        self.assertEqual(2, len(edgesB))
+        self.assertEqual(0, len(edgesC))
+        self.assertEqual(0, len(edgesD))
