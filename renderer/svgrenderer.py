@@ -1,0 +1,4 @@
+class SvgRenderer(object):
+
+    pass
+
