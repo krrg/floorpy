@@ -60,12 +60,12 @@ class RoomTestCase(unittest.TestCase):
     def test_contains_rectangle_0(self):
         room = RoomFactory.Rectangle(12, 10)
 
-        print(room.contains(0, 0))
-        print(room.contains(0, 10))
-        print(room.contains(12, 0))
-        print(room.contains(12, 10))
+        self.assertFalse(room.contains(0, 0))
+        self.assertFalse(room.contains(0, 10))
+        self.assertFalse(room.contains(12, 0))
+        self.assertFalse(room.contains(12, 10))
 
-        print(room.point_on_edge(0, 5))
-        print(room.point_on_edge(6, 10))
-        print(room.point_on_edge(6, 0))
-        print(room.point_on_edge(12, 5))
+        self.assertTrue(room.point_on_edge(0, 5))
+        self.assertTrue(room.point_on_edge(6, 10))
+        self.assertTrue(room.point_on_edge(6, 0))
+        self.assertTrue(room.point_on_edge(12, 5))
