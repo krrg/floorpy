@@ -1,6 +1,6 @@
 import unittest
 from core.edge import Edge, EdgeFactory, Orientation
-from core.room import Room
+from core.room import Room, RoomFactory
 
 class RoomTestCase(unittest.TestCase):
 
@@ -46,3 +46,26 @@ class RoomTestCase(unittest.TestCase):
         self.assertEqual(2, len(edgesB))
         self.assertEqual(0, len(edgesC))
         self.assertEqual(0, len(edgesD))
+
+    def test_contains_rectangle_0(self):
+        room = RoomFactory.Rectangle(10, 10)
+
+        self.assertTrue(room.contains(5, 5))
+        self.assertFalse(room.contains(100, 100))
+        self.assertFalse(room.contains(5, 15))
+        self.assertFalse(room.contains(15, 5))
+        self.assertFalse(room.contains(-10, 5))
+        self.assertFalse(room.contains(5, -10))
+
+    def test_contains_rectangle_0(self):
+        room = RoomFactory.Rectangle(12, 10)
+
+        print(room.contains(0, 0))
+        print(room.contains(0, 10))
+        print(room.contains(12, 0))
+        print(room.contains(12, 10))
+
+        print(room.point_on_edge(0, 5))
+        print(room.point_on_edge(6, 10))
+        print(room.point_on_edge(6, 0))
+        print(room.point_on_edge(12, 5))
