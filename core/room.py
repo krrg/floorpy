@@ -2,15 +2,11 @@ from core.edge import Edge, Orientation, EdgeFactory
 
 class Room(object):
 
-    def __init__(self, edges, titles):
+    def __init__(self, edges):
         self.edges = edges
-        self.titles = titles
 
     def area(self):
         return 0
-
-    def is_complete(self):
-        return len(self.titles) == 1
 
     def find_nearest_edge_in_direction(self, orientation, sign, x, y):
         if orientation == Orientation.Horizontal:
@@ -43,6 +39,7 @@ class Room(object):
 
     def contains(self, x, y, neg_edge_hint=None, pos_edge_hint=None, orientation_hint=Orientation.Horizontal):
         if self.point_on_edge(x, y):
+            print("Point is on edge")
             return False
 
         if not neg_edge_hint:
@@ -51,6 +48,7 @@ class Room(object):
             pos_edge_hint = self.find_nearest_edge_in_positive(orientation_hint, x, y)
 
         if len(neg_edge_hint) == 0 or len(pos_edge_hint) == 0:
+            print("Couldn't find any walls to left or right")
             return False
 
         neg_edge_hint, pos_edge_hint = neg_edge_hint[0], pos_edge_hint[0]
@@ -66,19 +64,63 @@ class Room(object):
             pos_edge_hint.right,
         ])
 
+        print("Do both edges agree? ", self in (neg_rooms & pos_rooms))
+        print("Rooms", neg_rooms, pos_rooms)
         return self in (neg_rooms & pos_rooms)
 
+    def subdivide_edges(self, x, y, edges):
+        if len(edges) == 1:
+            edge = edges[0]
+            return edge.subdivide(edge.project_to_v(x, y))
+        else:
+            edge0, edge1 = edges
+            return edge0, edge1
 
 
     def subdivide(self, x, y, orientation_of_new_wall):
         neg_edge = self.find_nearest_edge_in_negative(orientation_of_new_wall.negate(), x, y)
         pos_edge = self.find_nearest_edge_in_positive(orientation_of_new_wall.negate(), x, y)
 
+        if not self.contains(x, y, neg_edge_hint=neg_edge, pos_edge_hint=pos_edge):
+            raise SubdivisionOutOfBoundsException()
+
+        edge0, edge1 = self.subdivide_edges(x, y, neg_edge)
+        edge2, edge3 = self.subdivide_edges(x, y, pos_edge)
+
+        # Figure out which indexes to draw the edge across at.
+        split_index_1 = max(self.edges.index(edge0), self.edges.index(edge1))
+        split_index_2 = max(self.edges.index(edge2), self.edges.index(edge3))
+
+        if split_index_1 > split_index_2:
+            split_index_1, split_index_2 = split_index_2, split_index_1
+
+        roomA = Room([])
+        roomB = Room([])
+
+        new_edge = Edge(neg_edge[0].z, pos_edge[0].z, neg_edge[0].project_to_v(x, y), orientation_of_new_wall, roomA, roomB)
+
+        # Sketchy, don't do this at home.
+        roomA.edges = self.edges[:split_index_1] + [new_edge] + self.edges[split_index_2:]
+        roomB.edges = [new_edge] + self.edges[split_index_1:split_index_2]
+
+        for edge in roomA.edges:
+            edge.replace_room(self, roomA)
+
+        for edge in roomB.edges:
+            edge.replace_room(self, roomB)
+
+        return roomB, roomA
+
 
     def replace_edge(self, old_edge, edgeA, edgeB):
         old_index = self.edges.index(old_edge)
         self.edges.insert(old_index, edgeB)
         self.edges.insert(old_index, edgeA)
+        self.edges.remove(old_edge)
+
+
+class SubdivisionOutOfBoundsException(Exception):
+    pass
 
 
 class RoomFactory(object):
@@ -95,8 +137,7 @@ class RoomFactory(object):
         vertex_bottom_right = (x_offset + width, y_offset + height)
 
         edges = []  # We will hold on to this reference!
-        titles = ["Wreck Room"]
-        room = Room(edges, titles)
+        room = Room(edges)
 
         edge_left = EdgeFactory.create_edge_from_points(vertex_bottom_left, vertex_top_left, room_right=room)
         edge_top = EdgeFactory.create_edge_from_points(vertex_top_left, vertex_top_right,  room_right=room)
