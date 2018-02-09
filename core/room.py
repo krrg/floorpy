@@ -2,11 +2,27 @@ from core.edge import Edge, Orientation, EdgeFactory
 
 class Room(object):
 
-    def __init__(self, edges):
+    def __init__(self, edges, label="Room"):
         self.edges = edges
+        self.label = label
 
     def area(self):
         return 0
+
+    @property
+    def center(self):
+        x_max, x_min, y_max, y_min = float('-inf'), float('inf'), float('-inf'), float('inf')
+        for edge in self.edges:
+            for x, y in edge.cartesian_points:
+                x_max = max(x_max, x)
+                x_min = min(x_min, x)
+                y_max = max(y_max, y)
+                y_min = min(y_min, y)
+                print(x, y)
+
+        print("this is room ", self)
+
+        return (x_max + x_min) * 0.5, (y_max + y_min) * 0.5
 
     def find_nearest_edge_in_direction(self, orientation, sign, x, y):
         if orientation == Orientation.Horizontal:
@@ -39,7 +55,6 @@ class Room(object):
 
     def contains(self, x, y, neg_edge_hint=None, pos_edge_hint=None, orientation_hint=Orientation.Horizontal):
         if self.point_on_edge(x, y):
-            print("Point is on edge")
             return False
 
         if not neg_edge_hint:
@@ -48,7 +63,6 @@ class Room(object):
             pos_edge_hint = self.find_nearest_edge_in_positive(orientation_hint, x, y)
 
         if len(neg_edge_hint) == 0 or len(pos_edge_hint) == 0:
-            print("Couldn't find any walls to left or right")
             return False
 
         neg_edge_hint, pos_edge_hint = neg_edge_hint[0], pos_edge_hint[0]
@@ -64,8 +78,6 @@ class Room(object):
             pos_edge_hint.right,
         ])
 
-        print("Do both edges agree? ", self in (neg_rooms & pos_rooms))
-        print("Rooms", neg_rooms, pos_rooms)
         return self in (neg_rooms & pos_rooms)
 
     def subdivide_edges(self, x, y, edges):
@@ -97,7 +109,7 @@ class Room(object):
         roomA = Room([])
         roomB = Room([])
 
-        new_edge = Edge(neg_edge[0].z, pos_edge[0].z, neg_edge[0].project_to_v(x, y), orientation_of_new_wall, roomA, roomB)
+        new_edge = Edge(neg_edge[0].z, pos_edge[0].z, neg_edge[0].project_to_v(x, y), orientation_of_new_wall, roomB, roomA)
 
         # Sketchy, don't do this at home.
         roomA.edges = self.edges[:split_index_1] + [new_edge] + self.edges[split_index_2:]
@@ -117,6 +129,13 @@ class Room(object):
         self.edges.insert(old_index, edgeB)
         self.edges.insert(old_index, edgeA)
         self.edges.remove(old_edge)
+
+    @property
+    def neighbors(self):
+        for edge in self.edges:
+            for room in [edge.adj_room_left, edge.adj_room_right]:
+                if room is not None:
+                    yield room
 
 
 class SubdivisionOutOfBoundsException(Exception):

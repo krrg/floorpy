@@ -1,0 +1,94 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+Edge	../core/edge.py	/^class Edge(object):$/;"	kind:class	line:1
+Edge	../core/room.py	/^from core.edge import Edge, Orientation, EdgeFactory$/;"	kind:namespace	line:1
+Edge	../core/tests/test_edge.py	/^from core.edge import Edge, EdgeFactory, Orientation$/;"	kind:namespace	line:3
+Edge	../core/tests/test_room.py	/^from core.edge import Edge, EdgeFactory, Orientation$/;"	kind:namespace	line:2
+EdgeFactory	../core/edge.py	/^class EdgeFactory(object):$/;"	kind:class	line:69
+EdgeFactory	../core/room.py	/^from core.edge import Edge, Orientation, EdgeFactory$/;"	kind:namespace	line:1
+EdgeFactory	../core/tests/test_edge.py	/^from core.edge import Edge, EdgeFactory, Orientation$/;"	kind:namespace	line:3
+EdgeFactory	../core/tests/test_room.py	/^from core.edge import Edge, EdgeFactory, Orientation$/;"	kind:namespace	line:2
+EdgeTestCases	../core/tests/test_edge.py	/^class EdgeTestCases(unittest.TestCase):$/;"	kind:class	line:5
+FloorPlan	../core/floorplan.py	/^class FloorPlan(object):$/;"	kind:class	line:1
+FloorPlan	../main.py	/^from core.floorplan import FloorPlan$/;"	kind:namespace	line:3
+Horizontal	../core/edge.py	/^    Horizontal = "Horizontal"$/;"	kind:variable	line:93
+InvalidEdgeSubdivision	../core/edge.py	/^class InvalidEdgeSubdivision(Exception):$/;"	kind:class	line:87
+Orientation	../core/edge.py	/^class Orientation(enum.Enum):$/;"	kind:class	line:92
+Orientation	../core/room.py	/^from core.edge import Edge, Orientation, EdgeFactory$/;"	kind:namespace	line:1
+Orientation	../core/tests/test_edge.py	/^from core.edge import Edge, EdgeFactory, Orientation$/;"	kind:namespace	line:3
+Orientation	../core/tests/test_room.py	/^from core.edge import Edge, EdgeFactory, Orientation$/;"	kind:namespace	line:2
+Orientation	../main.py	/^from core.edge import Orientation$/;"	kind:namespace	line:4
+Rectangle	../core/room.py	/^    def Rectangle(width, height, x_offset=0, y_offset=0):$/;"	kind:member	line:152
+Room	../core/room.py	/^class Room(object):$/;"	kind:class	line:3
+Room	../core/tests/test_edge.py	/^from core.room import Room, RoomFactory$/;"	kind:namespace	line:2
+Room	../core/tests/test_room.py	/^from core.room import Room, RoomFactory$/;"	kind:namespace	line:3
+Room	../main.py	/^from core.room import RoomFactory, Room$/;"	kind:namespace	line:2
+RoomFactory	../core/room.py	/^class RoomFactory(object):$/;"	kind:class	line:145
+RoomFactory	../core/tests/test_edge.py	/^from core.room import Room, RoomFactory$/;"	kind:namespace	line:2
+RoomFactory	../core/tests/test_room.py	/^from core.room import Room, RoomFactory$/;"	kind:namespace	line:3
+RoomFactory	../main.py	/^from core.room import RoomFactory, Room$/;"	kind:namespace	line:2
+RoomTestCase	../core/tests/test_room.py	/^class RoomTestCase(unittest.TestCase):$/;"	kind:class	line:5
+Square	../core/room.py	/^    def Square(width, x_offset=0, y_offset=0):$/;"	kind:member	line:148
+SubdivisionOutOfBoundsException	../core/room.py	/^class SubdivisionOutOfBoundsException(Exception):$/;"	kind:class	line:141
+SvgRenderer	../renderer/svgrenderer.py	/^class SvgRenderer(object):$/;"	kind:class	line:3
+Vertical	../core/edge.py	/^    Vertical = "Vertical"$/;"	kind:variable	line:94
+__init__	../core/edge.py	/^    def __init__(self, v0, v1, z, horz_or_vert, adj_room_left_01, adj_room_left_10):$/;"	kind:member	line:3
+__init__	../core/floorplan.py	/^    def __init__(self, rooms):$/;"	kind:member	line:3
+__init__	../core/room.py	/^    def __init__(self, edges, label="Room"):$/;"	kind:member	line:5
+__init__.py	../core/__init__.py	1;"	kind:file	line:1
+__init__.py	../renderer/__init__.py	1;"	kind:file	line:1
+__repr__	../core/edge.py	/^    def __repr__(self):$/;"	kind:member	line:65
+__str__	../core/edge.py	/^    def __str__(self):$/;"	kind:member	line:62
+area	../core/room.py	/^    def area(self):$/;"	kind:member	line:9
+cartesian_points	../core/edge.py	/^    def cartesian_points(self):$/;"	kind:member	line:42
+center	../core/room.py	/^    def center(self):$/;"	kind:member	line:13
+contains	../core/edge.py	/^    def contains(self, v):$/;"	kind:member	line:25
+contains	../core/room.py	/^    def contains(self, x, y, neg_edge_hint=None, pos_edge_hint=None, orientation_hint=Orientation.Horizontal):$/;"	kind:member	line:56
+create_edge	../core/edge.py	/^    def create_edge(x0, y0, x1, y1, room_left=None, room_right=None):$/;"	kind:member	line:72
+create_edge_from_points	../core/edge.py	/^    def create_edge_from_points(p0, p1, room_left=None, room_right=None):$/;"	kind:member	line:81
+door.py	../core/door.py	1;"	kind:file	line:1
+edge.py	../core/edge.py	1;"	kind:file	line:1
+enum	../core/edge.py	/^import enum$/;"	kind:namespace	line:90
+find_nearest_edge_in_direction	../core/room.py	/^    def find_nearest_edge_in_direction(self, orientation, sign, x, y):$/;"	kind:member	line:27
+find_nearest_edge_in_negative	../core/room.py	/^    def find_nearest_edge_in_negative(self, orientation, x, y):$/;"	kind:member	line:50
+find_nearest_edge_in_positive	../core/room.py	/^    def find_nearest_edge_in_positive(self, orientation, x, y):$/;"	kind:member	line:47
+floorplan.py	../core/floorplan.py	1;"	kind:file	line:1
+left	../core/edge.py	/^    def left(self):$/;"	kind:member	line:55
+main	../main.py	/^def main():$/;"	kind:function	line:6
+main.py	../main.py	1;"	kind:file	line:1
+negate	../core/edge.py	/^    def negate(self):$/;"	kind:member	line:96
+neighbors	../core/room.py	/^    def neighbors(self):$/;"	kind:member	line:134
+point_on_edge	../core/room.py	/^    def point_on_edge(self, x, y):$/;"	kind:member	line:53
+project_to_v	../core/edge.py	/^    def project_to_v(self, x, y):$/;"	kind:member	line:38
+render_connectivity_graph	../renderer/svgrenderer.py	/^    def render_connectivity_graph(rooms, drawing, group):$/;"	kind:member	line:37
+render_edge	../renderer/svgrenderer.py	/^    def render_edge(edge, drawing, group):$/;"	kind:member	line:32
+render_labels	../renderer/svgrenderer.py	/^    def render_labels(rooms, drawing, group):$/;"	kind:member	line:45
+render_plan	../renderer/svgrenderer.py	/^    def render_plan(floorplan, connectivity_graph=False):$/;"	kind:member	line:6
+renderer	../main.py	/^import renderer.svgrenderer$/;"	kind:namespace	line:1
+replace_edge	../core/room.py	/^    def replace_edge(self, old_edge, edgeA, edgeB):$/;"	kind:member	line:127
+replace_room	../core/edge.py	/^    def replace_room(self, old_room, new_room):$/;"	kind:member	line:48
+right	../core/edge.py	/^    def right(self):$/;"	kind:member	line:59
+room.py	../core/room.py	1;"	kind:file	line:1
+strict_contains	../core/edge.py	/^    def strict_contains(self, x, y):$/;"	kind:member	line:31
+subdivide	../core/edge.py	/^    def subdivide(self, v):$/;"	kind:member	line:11
+subdivide	../core/floorplan.py	/^    def subdivide(self, pt, direction):$/;"	kind:member	line:6
+subdivide	../core/room.py	/^    def subdivide(self, x, y, orientation_of_new_wall):$/;"	kind:member	line:92
+subdivide_edges	../core/room.py	/^    def subdivide_edges(self, x, y, edges):$/;"	kind:member	line:83
+svgrenderer	../main.py	/^import renderer.svgrenderer$/;"	kind:namespace	line:1
+svgrenderer.py	../renderer/svgrenderer.py	1;"	kind:file	line:1
+svgwrite	../renderer/svgrenderer.py	/^import svgwrite$/;"	kind:namespace	line:1
+test_center_point	../core/tests/test_room.py	/^    def test_center_point(self):$/;"	kind:member	line:73
+test_contains_rectangle_0	../core/tests/test_room.py	/^    def test_contains_rectangle_0(self):$/;"	kind:member	line:50
+test_contains_rectangle_0	../core/tests/test_room.py	/^    def test_contains_rectangle_0(self):$/;"	kind:member	line:60
+test_edge.py	../core/tests/test_edge.py	1;"	kind:file	line:1
+test_edge_subdivide	../core/tests/test_edge.py	/^    def test_edge_subdivide(self):$/;"	kind:member	line:7
+test_find_nearest_edge_0	../core/tests/test_room.py	/^    def test_find_nearest_edge_0(self):$/;"	kind:member	line:7
+test_find_nearest_edge_1	../core/tests/test_room.py	/^    def test_find_nearest_edge_1(self):$/;"	kind:member	line:20
+test_find_nearest_edge_2	../core/tests/test_room.py	/^    def test_find_nearest_edge_2(self):$/;"	kind:member	line:33
+test_room.py	../core/tests/test_room.py	1;"	kind:file	line:1
+unittest	../core/tests/test_edge.py	/^import unittest$/;"	kind:namespace	line:1
+unittest	../core/tests/test_room.py	/^import unittest$/;"	kind:namespace	line:1

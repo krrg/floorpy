@@ -26,7 +26,6 @@ class Edge(object):
         min_v = min(self.v0, self.v1)
         max_v = max(self.v0, self.v1)
         result = min_v <= v <= max_v
-        print(f"My name is edge {self.v0} to {self.v1}, and I feel that {v} {result} in my coordinates.")
         return result
 
     def strict_contains(self, x, y):

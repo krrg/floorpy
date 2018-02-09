@@ -5,7 +5,7 @@ from core.room import Room, RoomFactory
 class RoomTestCase(unittest.TestCase):
 
     def test_find_nearest_edge_0(self):
-        room = Room([EdgeFactory.create_edge(0, 0, 0, 5)], [])
+        room = Room([EdgeFactory.create_edge(0, 0, 0, 5)])
 
         edgesA = room.find_nearest_edge_in_positive(Orientation.Vertical, -5, 3)
         edgesB = room.find_nearest_edge_in_negative(Orientation.Vertical, -5, 3)
@@ -18,7 +18,7 @@ class RoomTestCase(unittest.TestCase):
         self.assertEqual(0, len(edgesD))
 
     def test_find_nearest_edge_1(self):
-        room = Room([EdgeFactory.create_edge(0, 0, 5, 0)], [])
+        room = Room([EdgeFactory.create_edge(0, 0, 5, 0)])
 
         edgesA = room.find_nearest_edge_in_positive(Orientation.Vertical, 3, 5)
         edgesB = room.find_nearest_edge_in_negative(Orientation.Vertical, 3, 5)
@@ -35,7 +35,7 @@ class RoomTestCase(unittest.TestCase):
             EdgeFactory.create_edge(0, 0, 0, 5),
             EdgeFactory.create_edge(0, 5, 0, 10)
         ]
-        room = Room(edges, [])
+        room = Room(edges)
 
         edgesA = room.find_nearest_edge_in_positive(Orientation.Vertical, 5, 5)
         edgesB = room.find_nearest_edge_in_negative(Orientation.Vertical, 5, 5)
@@ -69,3 +69,7 @@ class RoomTestCase(unittest.TestCase):
         self.assertTrue(room.point_on_edge(6, 10))
         self.assertTrue(room.point_on_edge(6, 0))
         self.assertTrue(room.point_on_edge(12, 5))
+
+    def test_center_point(self):
+        room = RoomFactory.Rectangle(14, 16)
+        self.assertTrue(room.center == (7.0, 8.0))
