@@ -18,15 +18,33 @@ class Room2(object):
 
             new_edges = list(new_edges[::original_edge.sign(self)])
 
+            neighbor_new_edges = new_edges[::-1]
+            neighbor = original_edge.opposite_room(self)
+            if neighbor is not None:
+                neighbor_original_edge_idx = neighbor.edges.index(original_edge)
+                neighbor.edges = neighbor.edges[:neighbor_original_edge_idx] + neighbor_new_edges + neighbor.edges[neighbor_original_edge_idx+1:]
+
             self.edges = self.edges[:original_edge_idx] + new_edges + self.edges[original_edge_idx+1:]
+
 
             for e in new_edges:
                 e.positive = original_edge.positive
                 e.negative = original_edge.negative
         else:
-            #This isn't quite right
-            #need to be sorted by direction
-            new_edges = list(close_edge)
+            e0 = close_edge[0][0]
+            e1 = close_edge[1][0]
+
+            idx0 = self.edges.index(e0)
+            idx1 = self.edges.index(e1)
+
+            # these were originally found in order
+            # idx0 whould be lower than idx1
+            # they should be neighbors, flip direction if on ends
+            assert idx0 < idx1
+            if idx0==0 and idx1==len(self.edges)-1:
+                new_edges = [e1,e0]
+            else:
+                new_edges = [e0,e1]
 
         return new_edges
 
@@ -37,27 +55,26 @@ class Room2(object):
         close_pos_edge = []
         close_neg_distance = -np.inf
         close_neg_edge = []
-        print "Start Subdivide Search..."
-        print len(self.edges)
         for e in self.edges:
 
             interect_pt, dis = e.interect_line(p, direction)
-            print e, dis
             if dis is None:
                 continue
             assert abs(dis) > 1e-8 #make sure we are not setting an edge on the line
 
             if dis < 0:
-                if dis == close_neg_distance:
+                if np.isclose(dis, close_neg_distance):
                     close_neg_edge.append((e, interect_pt))
                 elif dis > close_neg_distance:
                     close_neg_edge = [(e, interect_pt)]
+                    close_neg_distance = dis
 
             if dis > 0:
-                if dis == close_pos_distance:
+                if np.isclose(dis, close_pos_distance):
                     close_pos_edge.append((e, interect_pt))
                 elif dis < close_pos_distance:
                     close_pos_edge = [(e, interect_pt)]
+                    close_pos_distance = dis
 
 
         pos_0, pos_1 = self.subdivide_edge(close_pos_edge)
@@ -88,14 +105,6 @@ class Room2(object):
         room0 = Room2(part0)
         room1 = Room2(part1)
 
-        # print "Subdivide Side"
-        # print pos_1.p0
-        # print pos_1.p1
-        # print pos_1.sign(self)
-        # print p1
-        # print p0
-        # print "^^^^^^^^^^^^^^"
-
         # We use pos_1 because the edges will always be inserted
         # after it. We could have used any of the split edges
         v = pos_1.p1 - pos_1.p0
@@ -116,22 +125,14 @@ class Room2(object):
         return room0, room1
 
     def contains(self, p):
-        print ""
-        print "Searching for ", p
-        for e in self.edges:
-            print e.p0, e.p1
-        print "-----"
 
         for e in self.edges:
             v_p = p - e.p0
             v_edge = e.p1 - e.p0
 
-            print e.p0, e.p1, v_p, e.sign(self), np.cross(v_edge, v_p)
             side = e.sign(self) * np.cross(v_edge, v_p)
             if side <= 0:
-                print "Failed Search"
                 return False
-        print "Success Search"
         return True
 
 
@@ -144,6 +145,7 @@ class Room2(object):
 
     @property
     def center(self):
+        pts = []
         x_max, x_min, y_max, y_min = float('-inf'), float('inf'), float('-inf'), float('inf')
         for edge in self.edges:
             for x, y in edge.cartesian_points:
@@ -151,7 +153,7 @@ class Room2(object):
                 x_min = min(x_min, x)
                 y_max = max(y_max, y)
                 y_min = min(y_min, y)
-
+                pts.append((x,y))
         return (x_max + x_min) * 0.5, (y_max + y_min) * 0.5
 
 if __name__ == "__main__":
@@ -167,7 +169,7 @@ if __name__ == "__main__":
     for e in edges:
         e.positive = room
 
-    print room.contains(np.array([0.5,0.5]))
-    print room.contains(np.array([1.5,1.5]))
+    print(room.contains(np.array([0.5,0.5])))
+    print(room.contains(np.array([1.5,1.5])))
 
     room.subdivide(np.array([0.5,0.5]), np.array([1,0]))

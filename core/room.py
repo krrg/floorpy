@@ -166,4 +166,3 @@ class RoomFactory(object):
         # Remember that we're living dangerously and holding onto a reference.
         edges.extend([edge_left, edge_top, edge_right, edge_bottom])
         return room
-

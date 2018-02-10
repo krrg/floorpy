@@ -32,11 +32,6 @@ def pnt2line(pnt, start, end):
 # https://gist.github.com/danieljfarrell/faf7c4cafd683db13cbc
 def ray_line_intersect(rayOrigin, rayDirection, point1, point2):
 
-    print "ro", rayOrigin
-    print "rd", rayDirection
-    print "p1", point1
-    print "p2", point2
-
     rayOrigin = rayOrigin.astype(np.float32)
     rayDirection = rayDirection.astype(np.float32)
     point1 = point1.astype(np.float32)
@@ -49,6 +44,10 @@ def ray_line_intersect(rayOrigin, rayDirection, point1, point2):
 
 
     d = np.dot(v2, v3)
+
+    if d == 0:
+        return None, None
+
     t1 = np.cross(v2, v1) / d
     t2 = np.dot(v1, v3) / d
 
@@ -66,9 +65,7 @@ class Edge2(object):
         self.positive = None
 
     def subdivide(self, p):
-        print "Subdivide Test: ", p, self.p0, self.p1
         dist, nearest = pnt2line(p, self.p0, self.p1)
-        print dist
         assert abs(dist) < 1e-4
 
         e0 = Edge2(self.p0, p)
@@ -100,8 +97,14 @@ class Edge2(object):
         if self.negative is old_room:
             self.negative = new_room
 
-    def interect_line(self, ro, rd):
+    def opposite_room(self, room):
+        if self.positive is room:
+            return self.negative
+        if self.negative is room:
+            return self.positive
+        raise Exception("Invalid opposite room request")
 
+    def interect_line(self, ro, rd):
         return ray_line_intersect(ro, rd, self.p0, self.p1)
 
     @property
@@ -119,23 +122,23 @@ if __name__ == "__main__":
     p  = np.array([  2, 0, 0.5])
 
     dist, nearest = pnt2line(p,p0,p1)
-    print dist
-    print nearest
+    print(dist)
+    print(nearest)
 
     e = Edge2(np.array([0,0]), np.array([2,2]))
     e0, e1 = e.subdivide(np.array([1,1]))
 
-    print e0.p0
-    print e0.p1
-    print e1.p0
-    print e1.p1
+    print(e0.p0)
+    print(e0.p1)
+    print(e1.p0)
+    print(e1.p1)
 
     ro = np.array([0,0])
     rd = np.array([-1,-1])
     p0 = np.array([1,0])
     p1 = np.array([0,1])
     p = ray_line_intersect(ro,rd,p0,p1)
-    print p
+    print(p)
 
     # p0 = np.array([0,0])
     # p1 = np.array([1,1])

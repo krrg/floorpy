@@ -26,28 +26,16 @@ def main():
 
     fp.subdivide(40, 40, Orientation.Horizontal)
 
-    print "Room Cnt ************************************************** 1"
-    for r in fp.rooms:
-        print "r"
-        for e in r.edges:
-            print "e"
-            print e.cartesian_points, e.sign(r)
-    print "Done room cnt"
-
     fp.subdivide(20, 60, Orientation.Vertical)
+    fp.subdivide(20, 10, Orientation.Vertical)
+
+
     # fp.subdivide(30, 20, Orientation.Vertical)
-
-    print "Room Cnt ************************************************** 2"
-    for r in fp.rooms:
-        print "r"
-        for e in r.edges:
-            print "e"
-            print e.cartesian_points, e.sign(r)
-    print "Done room cnt"
-
+    #
     # fp.subdivide(60, 20, Orientation.Vertical)
     # fp.subdivide(80, 80, Orientation.Vertical)
     # fp.subdivide(60, 60, Orientation.Horizontal)
+    # fp.subdivide(90, 60, Orientation.Horizontal)
 
 
     # roomA, roomB = room.subdivide(40, 40, Orientation.Horizontal)

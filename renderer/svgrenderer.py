@@ -9,7 +9,6 @@ class SvgRenderer(object):
         drawing.add(group)
 
         # for i, room in enumerate(floorplan.rooms):
-        #     print "I", i
         #     drawing = svgwrite.Drawing('out/output.svg')
         #     group = svgwrite.container.Group(transform='translate(32,32), scale(3)')
         #     drawing.add(group)
@@ -40,14 +39,11 @@ class SvgRenderer(object):
 
     @staticmethod
     def render_connectivity_graph(rooms, drawing, group):
-        print "Rendering.."
         for i, room in enumerate(rooms):
-            print "r"
             group.add(
-                drawing.circle(room.center, r=5, stroke='blue', fill='green', stroke_width=1)
+                drawing.circle(room.center, r=5, stroke='blue', fill='blue', stroke_width=1)
             )
             for e in room.edges:
-                print "E", e.cartesian_points
                 group.add(
                     drawing.line(room.center, e.center, stroke=svgwrite.rgb(0, 255, 0))
                 )
