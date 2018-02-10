@@ -5,13 +5,18 @@ class SvgRenderer(object):
     @staticmethod
     def render_plan(floorplan, connectivity_graph=False):
         drawing = svgwrite.Drawing('out/output.svg')
-        group = svgwrite.container.Group(transform='translate(32,32), scale(8)')
+        group = svgwrite.container.Group(transform='translate(32,32), scale(3)')
         drawing.add(group)
 
         # for i, room in enumerate(floorplan.rooms):
+        #     print "I", i
+        #     drawing = svgwrite.Drawing('out/output.svg')
+        #     group = svgwrite.container.Group(transform='translate(32,32), scale(3)')
+        #     drawing.add(group)
         #     for edge in room.edges:
         #         SvgRenderer.render_edge(edge, drawing, group)
-        #     drawing.saveas("output-" + str(i) + ".svg", pretty=True)
+        #     drawing.saveas("out/output-" + str(i) + ".svg", pretty=True)
+        # return "done"
 
         edges = set()
         for room in floorplan.rooms:
@@ -35,11 +40,18 @@ class SvgRenderer(object):
 
     @staticmethod
     def render_connectivity_graph(rooms, drawing, group):
-        for room in rooms:
-            for neighbor in room.neighbors:
+        print "Rendering.."
+        for i, room in enumerate(rooms):
+            print "r"
+            group.add(
+                drawing.circle(room.center, r=5, stroke='blue', fill='green', stroke_width=1)
+            )
+            for e in room.edges:
+                print "E", e.cartesian_points
                 group.add(
-                    drawing.line(room.center, neighbor.center, stroke=svgwrite.rgb(0, 255, 0))
+                    drawing.line(room.center, e.center, stroke=svgwrite.rgb(0, 255, 0))
                 )
+
 
     @staticmethod
     def render_labels(rooms, drawing, group):

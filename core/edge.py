@@ -95,5 +95,3 @@ class Orientation(enum.Enum):
 
     def negate(self):
         return Orientation.Horizontal if self == Orientation.Vertical else Orientation.Vertical
-
-
