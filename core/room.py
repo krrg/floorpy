@@ -1,16 +1,151 @@
 from core.edge import Edge, Orientation, EdgeFactory
 
+import numpy as np
+
 class Room(object):
 
     def __init__(self, edges, label="Room"):
         self.edges = edges
         self.label = label
 
-    def area(self):
-        return 0
+    def subdivide_edge(self, close_edge):
+
+        if len(close_edge) == 1:
+            original_edge = close_edge[0][0]
+            subdivide_pt = close_edge[0][1]
+            new_edges = original_edge.subdivide(subdivide_pt)
+
+            original_edge_idx = self.edges.index(original_edge)
+
+            new_edges = list(new_edges[::original_edge.sign(self)])
+
+            neighbor_new_edges = new_edges[::-1]
+            neighbor = original_edge.opposite_room(self)
+            if neighbor is not None:
+                neighbor_original_edge_idx = neighbor.edges.index(original_edge)
+                neighbor.edges = neighbor.edges[:neighbor_original_edge_idx] + neighbor_new_edges + neighbor.edges[neighbor_original_edge_idx+1:]
+
+            self.edges = self.edges[:original_edge_idx] + new_edges + self.edges[original_edge_idx+1:]
+
+
+            for e in new_edges:
+                e.positive = original_edge.positive
+                e.negative = original_edge.negative
+        else:
+            e0 = close_edge[0][0]
+            e1 = close_edge[1][0]
+
+            idx0 = self.edges.index(e0)
+            idx1 = self.edges.index(e1)
+
+            # these were originally found in order
+            # idx0 whould be lower than idx1
+            # they should be neighbors, flip direction if on ends
+            assert idx0 < idx1
+            if idx0==0 and idx1==len(self.edges)-1:
+                new_edges = [e1,e0]
+            else:
+                new_edges = [e0,e1]
+
+        return new_edges
+
+    def subdivide(self, p, direction):
+        assert self.contains(p)
+
+        close_pos_distance = np.inf
+        close_pos_edge = []
+        close_neg_distance = -np.inf
+        close_neg_edge = []
+        for e in self.edges:
+
+            interect_pt, dis = e.interect_line(p, direction)
+            if dis is None:
+                continue
+            assert abs(dis) > 1e-8 #make sure we are not setting an edge on the line
+
+            if dis < 0:
+                if np.isclose(dis, close_neg_distance):
+                    close_neg_edge.append((e, interect_pt))
+                elif dis > close_neg_distance:
+                    close_neg_edge = [(e, interect_pt)]
+                    close_neg_distance = dis
+
+            if dis > 0:
+                if np.isclose(dis, close_pos_distance):
+                    close_pos_edge.append((e, interect_pt))
+                elif dis < close_pos_distance:
+                    close_pos_edge = [(e, interect_pt)]
+                    close_pos_distance = dis
+
+
+        pos_0, pos_1 = self.subdivide_edge(close_pos_edge)
+        neg_0, neg_1 = self.subdivide_edge(close_neg_edge)
+
+
+        p0 = pos_0.p1_by_sign(self)
+        p1 = neg_0.p1_by_sign(self)
+
+        new_edge = Edge(p0,p1)
+
+        pos_idx_0 = self.edges.index(pos_0)
+        pos_idx_1 = self.edges.index(pos_1)
+
+        neg_idx_0 = self.edges.index(neg_0)
+        neg_idx_1 = self.edges.index(neg_1)
+
+        if pos_idx_1 < neg_idx_0:
+            part0 = [new_edge] + self.edges[pos_idx_1:neg_idx_0+1]
+        else:
+            part0 = self.edges[:neg_idx_0+1] + [new_edge] + self.edges[pos_idx_1:]
+
+        if neg_idx_1 < pos_idx_0:
+            part1 = self.edges[neg_idx_1:pos_idx_0+1] + [new_edge]
+        else:
+            part1 = self.edges[:pos_idx_0+1] + [new_edge] + self.edges[neg_idx_1:]
+
+        room0 = Room(part0)
+        room1 = Room(part1)
+
+        # We use pos_1 because the edges will always be inserted
+        # after it. We could have used any of the split edges
+        v = pos_1.p1 - pos_1.p0
+        if pos_1.sign(self) * np.cross(p1-p0, v) > 0:
+            new_edge.positive = room0
+            new_edge.negative = room1
+        else:
+            new_edge.positive = room1
+            new_edge.negative = room0
+
+        for e in part0:
+            e.replace_room(self, room0)
+
+        for e in part1:
+            e.replace_room(self, room1)
+
+
+        return room0, room1
+
+    def contains(self, p):
+        for e in self.edges:
+            v_p = p - e.p0
+            v_edge = e.p1 - e.p0
+
+            side = e.sign(self) * np.cross(v_edge, v_p)
+            if side <= 0:
+                return False
+        return True
+
+
+    @property
+    def neighbors(self):
+        for edge in self.edges:
+            for room in [edge.positive, edge.negative]:
+                if room is not None:
+                    yield room
 
     @property
     def center(self):
+        pts = []
         x_max, x_min, y_max, y_min = float('-inf'), float('inf'), float('-inf'), float('inf')
         for edge in self.edges:
             for x, y in edge.cartesian_points:
@@ -18,128 +153,26 @@ class Room(object):
                 x_min = min(x_min, x)
                 y_max = max(y_max, y)
                 y_min = min(y_min, y)
-                print(x, y)
-
-        print("this is room ", self)
-
+                pts.append((x,y))
         return (x_max + x_min) * 0.5, (y_max + y_min) * 0.5
 
-    def find_nearest_edge_in_direction(self, orientation, sign, x, y):
-        if orientation == Orientation.Horizontal:
-            z_start, v = y, x
-        elif orientation == Orientation.Vertical:
-            z_start, v = x, y
+# if __name__ == "__main__":
 
-        oriented_edges = filter(lambda edge: edge.orientation == orientation, self.edges)
-        ray_hit_edges = filter(lambda edge: edge.contains(v), oriented_edges)
-        correct_sign_edges = filter(lambda edge: (edge.z - z_start) * sign > 0, ray_hit_edges)  # This is either > or <
-        correct_sign_edges = list(correct_sign_edges)
+#     p0 = np.array([0,0])
+#     p1 = np.array([1,0])
+#     p2 = np.array([1,1])
+#     p3 = np.array([0,1])
 
-        if not correct_sign_edges:
-            return []
+#     edges = [Edge(p0, p1), Edge(p1, p2), Edge(p2,p3), Edge(p3,p0)]
+#     room = Room(edges)
 
-        closest_edge = min(correct_sign_edges, key=lambda edge: abs(edge.z - z_start))
-        closest_edge_dist = abs(closest_edge.z - z_start)
-        # If we hit the corner, then may be multiple closest edges
-        matching_edges = filter(lambda edge: abs(edge.z - z_start) == closest_edge_dist, correct_sign_edges)
-        return list(matching_edges)
+#     for e in edges:
+#         e.positive = room
 
-    def find_nearest_edge_in_positive(self, orientation, x, y):
-        return self.find_nearest_edge_in_direction(orientation, 1, x, y)
+#     print(room.contains(np.array([0.5,0.5])))
+#     print(room.contains(np.array([1.5,1.5])))
 
-    def find_nearest_edge_in_negative(self, orientation, x, y):
-        return self.find_nearest_edge_in_direction(orientation, -1, x, y)
-
-    def point_on_edge(self, x, y):
-        return any([edge.strict_contains(x, y) for edge in self.edges])
-
-    def contains(self, x, y, neg_edge_hint=None, pos_edge_hint=None, orientation_hint=Orientation.Horizontal):
-        if self.point_on_edge(x, y):
-            return False
-
-        if not neg_edge_hint:
-            neg_edge_hint = self.find_nearest_edge_in_negative(orientation_hint, x, y)
-        if not pos_edge_hint:
-            pos_edge_hint = self.find_nearest_edge_in_positive(orientation_hint, x, y)
-
-        if len(neg_edge_hint) == 0 or len(pos_edge_hint) == 0:
-            return False
-
-        neg_edge_hint, pos_edge_hint = neg_edge_hint[0], pos_edge_hint[0]
-
-        # Kind of lazy, assume no weirdly shaped rooms
-        neg_rooms = set([
-            neg_edge_hint.left,
-            neg_edge_hint.right
-        ])
-
-        pos_rooms = set([
-            pos_edge_hint.left,
-            pos_edge_hint.right,
-        ])
-
-        return self in (neg_rooms & pos_rooms)
-
-    def subdivide_edges(self, x, y, edges):
-        if len(edges) == 1:
-            edge = edges[0]
-            return edge.subdivide(edge.project_to_v(x, y))
-        else:
-            edge0, edge1 = edges
-            return edge0, edge1
-
-
-    def subdivide(self, x, y, orientation_of_new_wall):
-        neg_edge = self.find_nearest_edge_in_negative(orientation_of_new_wall.negate(), x, y)
-        pos_edge = self.find_nearest_edge_in_positive(orientation_of_new_wall.negate(), x, y)
-
-        if not self.contains(x, y, neg_edge_hint=neg_edge, pos_edge_hint=pos_edge):
-            raise SubdivisionOutOfBoundsException()
-
-        edge0, edge1 = self.subdivide_edges(x, y, neg_edge)
-        edge2, edge3 = self.subdivide_edges(x, y, pos_edge)
-
-        # Figure out which indexes to draw the edge across at.
-        split_index_1 = max(self.edges.index(edge0), self.edges.index(edge1))
-        split_index_2 = max(self.edges.index(edge2), self.edges.index(edge3))
-
-        if split_index_1 > split_index_2:
-            split_index_1, split_index_2 = split_index_2, split_index_1
-
-        roomA = Room([])
-        roomB = Room([])
-
-        new_edge = Edge(neg_edge[0].z, pos_edge[0].z, neg_edge[0].project_to_v(x, y), orientation_of_new_wall, roomB, roomA)
-
-        # Sketchy, don't do this at home.
-        roomA.edges = self.edges[:split_index_1] + [new_edge] + self.edges[split_index_2:]
-        roomB.edges = [new_edge] + self.edges[split_index_1:split_index_2]
-
-        for edge in roomA.edges:
-            edge.replace_room(self, roomA)
-
-        for edge in roomB.edges:
-            edge.replace_room(self, roomB)
-
-        return roomB, roomA
-
-
-    def replace_edge(self, old_edge, edgeA, edgeB):
-        old_index = self.edges.index(old_edge)
-        self.edges.insert(old_index, edgeB)
-        self.edges.insert(old_index, edgeA)
-        self.edges.remove(old_edge)
-
-    @property
-    def neighbors(self):
-        for edge in self.edges:
-            for room in [edge.adj_room_left, edge.adj_room_right]:
-                if room is not None:
-                    yield room
-
-
-class SubdivisionOutOfBoundsException(Exception):
-    pass
+#     room.subdivide(np.array([0.5,0.5]), np.array([1,0]))
 
 
 class RoomFactory(object):
@@ -150,19 +183,15 @@ class RoomFactory(object):
 
     @staticmethod
     def Rectangle(width, height, x_offset=0, y_offset=0):
-        vertex_top_left = (x_offset, y_offset)
-        vertex_top_right = (x_offset + width, y_offset)
-        vertex_bottom_left = (x_offset, y_offset + height)
-        vertex_bottom_right = (x_offset + width, y_offset + height)
+        p0 = np.array((x_offset, y_offset))
+        p1 = np.array((x_offset + width, y_offset))
+        p2 = np.array((x_offset + width, y_offset + height))
+        p3 = np.array((x_offset, y_offset + height))
 
-        edges = []  # We will hold on to this reference!
+        edges = [Edge(p0, p1), Edge(p1, p2), Edge(p2,p3), Edge(p3,p0)]
         room = Room(edges)
 
-        edge_left = EdgeFactory.create_edge_from_points(vertex_bottom_left, vertex_top_left, room_right=room)
-        edge_top = EdgeFactory.create_edge_from_points(vertex_top_left, vertex_top_right,  room_right=room)
-        edge_right = EdgeFactory.create_edge_from_points(vertex_top_right, vertex_bottom_right, room_right=room)
-        edge_bottom = EdgeFactory.create_edge_from_points(vertex_bottom_right, vertex_bottom_left, room_right=room)
+        for edge in room.edges:
+            edge.positive = room
 
-        # Remember that we're living dangerously and holding onto a reference.
-        edges.extend([edge_left, edge_top, edge_right, edge_bottom])
         return room

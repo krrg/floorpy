@@ -1,37 +1,33 @@
 import renderer.svgrenderer
 from core.room import RoomFactory, Room
-from core.floorplan2 import FloorPlan2
-from core.edge import Orientation
-
-from core.edge2 import Edge2
-from core.room2 import Room2
+from core.floorplan import FloorPlan
+from core.edge import Orientation, Edge
 import numpy as np
+
 
 def main():
 
-    # room = RoomFactory.Rectangle(100, 120)
-    p0 = np.array([0  ,0])
-    p1 = np.array([100,0])
-    p2 = np.array([100,120])
-    p3 = np.array([0,120])
+    room = RoomFactory.Rectangle(75 * 2, 20 *2)
+    fp = FloorPlan([room], scale=2)
 
-    edges = [Edge2(p0, p1), Edge2(p1, p2), Edge2(p2,p3), Edge2(p3,p0)]
-    room = Room2(edges)
-
-    for e in edges:
-        e.positive = room
-
-
-    fp = FloorPlan2([room])
-
-    fp.subdivide(40, 40, Orientation.Horizontal)
-
-    fp.subdivide(20, 60, Orientation.Vertical)
     fp.subdivide(20, 10, Orientation.Vertical)
+    fp.subdivide(33, 10, Orientation.Vertical)
+    fp.subdivide(30, 10, Orientation.Horizontal)
+    fp.subdivide(55, 15, Orientation.Horizontal)
+    fp.subdivide(33 + 11, 10, Orientation.Vertical)
+    fp.subdivide(75 - 11, 10, Orientation.Vertical)
+    fp.subdivide(50, 7, Orientation.Horizontal)
+
+
+
+    # fp.subdivide(40, 40, Orientation.Horizontal)
+
+    # fp.subdivide(20, 60, Orientation.Vertical)
+    # fp.subdivide(20, 10, Orientation.Vertical)
 
 
     # fp.subdivide(30, 20, Orientation.Vertical)
-    #
+
     # fp.subdivide(60, 20, Orientation.Vertical)
     # fp.subdivide(80, 80, Orientation.Vertical)
     # fp.subdivide(60, 60, Orientation.Horizontal)
@@ -46,9 +42,8 @@ def main():
     #     roomA, roomB, roomC, roomD
     # ])
 
+    renderer.svgrenderer.SvgRenderer(fp).render('out/output.svg')
 
-
-    renderer.svgrenderer.SvgRenderer.render_plan(fp, connectivity_graph=True)
 
 if __name__ == "__main__":
     main()
