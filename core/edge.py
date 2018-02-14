@@ -97,6 +97,10 @@ class Edge(object):
         a, b = self.cartesian_points
         return is_on(a, b, point)
 
+    @property
+    def length(self):
+        return np.linalg.norm(self.p1 - self.p0)
+
 
 class EdgeFactory(object):
 
@@ -128,38 +132,6 @@ class Orientation(enum.Enum):
     def negate(self):
         return Orientation.Horizontal if self == Orientation.Vertical else Orientation.Vertical
 
-
-# if __name__ == "__main__":
-
-#     p0 = np.array([  1, 0,   2])
-#     p1 = np.array([4.5, 0, 0.5])
-#     p  = np.array([  2, 0, 0.5])
-
-#     dist, nearest = pnt2line(p,p0,p1)
-#     print(dist)
-#     print(nearest)
-
-#     e = Edge(np.array([0,0]), np.array([2,2]))
-#     e0, e1 = e.subdivide(np.array([1,1]))
-
-#     print(e0.p0)
-#     print(e0.p1)
-#     print(e1.p0)
-#     print(e1.p1)
-
-#     ro = np.array([0,0])
-#     rd = np.array([-1,-1])
-#     p0 = np.array([1,0])
-#     p1 = np.array([0,1])
-#     p = ray_line_intersect(ro,rd,p0,p1)
-#     print(p)
-
-    # p0 = np.array([0,0])
-    # p1 = np.array([1,1])
-    # p2 = np.array([1,0])
-    # p3 = np.array([0,1])
-    # p = seg_intersect(p0,p1,p2,p3)
-    # print p
 
 def pnt2line(pnt, start, end):
 

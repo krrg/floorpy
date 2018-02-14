@@ -3,20 +3,20 @@ from core.room import RoomFactory, Room
 from core.floorplan import FloorPlan
 from core.edge import Orientation, Edge
 import numpy as np
-
+from generator.simple_generator import SimpleGenerator
 
 def main():
 
-    room = RoomFactory.Rectangle(75 * 2, 20 *2)
-    fp = FloorPlan([room], scale=2)
+    # room = RoomFactory.Rectangle(75 * 2, 20 *2)
+    # fp = FloorPlan([room], scale=2)
 
-    fp.subdivide(20, 10, Orientation.Vertical)
-    fp.subdivide(33, 10, Orientation.Vertical)
-    fp.subdivide(30, 10, Orientation.Horizontal)
-    fp.subdivide(55, 15, Orientation.Horizontal)
-    fp.subdivide(33 + 11, 10, Orientation.Vertical)
-    fp.subdivide(75 - 11, 10, Orientation.Vertical)
-    fp.subdivide(50, 7, Orientation.Horizontal)
+    # fp.subdivide(20, 10, Orientation.Vertical)
+    # fp.subdivide(33, 10, Orientation.Vertical)
+    # fp.subdivide(30, 10, Orientation.Horizontal)
+    # fp.subdivide(55, 15, Orientation.Horizontal)
+    # fp.subdivide(33 + 11, 10, Orientation.Vertical)
+    # fp.subdivide(75 - 11, 10, Orientation.Vertical)
+    # fp.subdivide(50, 7, Orientation.Horizontal)
 
 
 
@@ -41,6 +41,9 @@ def main():
     # fp = FloorPlan([
     #     roomA, roomB, roomC, roomD
     # ])
+
+    sg = SimpleGenerator(50, 80, range(10))
+    fp = next(sg.generate_candidate_floorplan())
 
     renderer.svgrenderer.SvgRenderer(fp).render('out/output.svg')
 

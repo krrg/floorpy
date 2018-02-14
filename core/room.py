@@ -8,6 +8,18 @@ class Room(object):
         self.edges = edges
         self.label = label
 
+    @property
+    def area(self):
+        x = []
+        y = []
+        for edge in self.edges:
+            p = edge.p1_by_sign(self)
+            x.append(p[0])
+            y.append(p[1])
+
+        return 0.5*np.abs(np.dot(x,np.roll(y,1))-np.dot(y,np.roll(x,1)))
+
+
     def subdivide_edge(self, close_edge):
 
         if len(close_edge) == 1:
@@ -138,10 +150,15 @@ class Room(object):
 
     @property
     def neighbors(self):
+        for n, e in self.neighbors_and_edges:
+            yield n
+
+    @property
+    def neighbors_and_edges(self):
         for edge in self.edges:
             for room in [edge.positive, edge.negative]:
                 if room is not None:
-                    yield room
+                    yield room, edge
 
     @property
     def center(self):

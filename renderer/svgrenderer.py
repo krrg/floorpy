@@ -14,6 +14,8 @@ class SvgRenderer(object):
         self.scaling = scaling
 
     def render(self, filename, show_edge_connections=False):
+        self.render_connectivity_graph()
+
         edges = set()
         for room in self.floorplan.rooms:
             for edge in room.edges:
@@ -43,10 +45,12 @@ class SvgRenderer(object):
             "stroke-width": 12,
             "stroke-linecap": "round"
         }))
-        self.render_door(edge, DoorFactory.interior_door(0.5, -1))
+        for door in edge.doors:
+            self.render_door(edge, door)
+        # self.render_door(edge, DoorFactory.interior_door(0.5, -1))
 
     def render_room_label(self, room):
-        label = room.label.upper()
+        label = str(room.area).upper()
         x, y = self.scale_point(room.center)
         self.group.add(
             self.drawing.text(label, x=[x], y=[y], **{
@@ -84,6 +88,21 @@ class SvgRenderer(object):
             self.drawing.circle(point, r=radius, stroke=color, fill=color, stroke_width=1)
         )
 
+    def render_connectivity_graph(self,):
+        for i, room in enumerate(self.floorplan.rooms):
+            for e in room.edges:
+                for door in e.doors:
+                    self.group.add(
+                        self.drawing.line(
+                            self.scale_point(room.center),
+                            self.scale_point(e.center),
+                            **{
+                                "stroke": svgwrite.rgb(0, 255, 0),
+                                "stroke-width": 4
+                            }
+                        )
+                    )
+
 
 
 
@@ -113,16 +132,7 @@ class SvgRenderer(object):
     #     p0, p1 = edge.cartesian_points
     #     group.add(drawing.line(p0, p1, stroke=svgwrite.rgb(0, 0, 0)))
 
-    # @staticmethod
-    # def render_connectivity_graph(rooms, drawing, group):
-    #     for i, room in enumerate(rooms):
-    #         group.add(
-    #             drawing.circle(room.center, r=2, stroke='blue', fill='blue', stroke_width=1)
-    #         )
-    #         for e in room.edges:
-    #             group.add(
-    #                 drawing.line(room.center, e.center, stroke=svgwrite.rgb(0, 255, 0))
-    #             )
+
 
 
     # @staticmethod
