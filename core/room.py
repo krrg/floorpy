@@ -162,7 +162,11 @@ class Room(object):
 
     @property
     def center(self):
-        pts = []
+        x_max, x_min, y_max, y_min = self.max_min_xy
+        return (x_max + x_min) * 0.5, (y_max + y_min) * 0.5
+
+    @property
+    def max_min_xy(self):
         x_max, x_min, y_max, y_min = float('-inf'), float('inf'), float('-inf'), float('inf')
         for edge in self.edges:
             for x, y in edge.cartesian_points:
@@ -170,8 +174,7 @@ class Room(object):
                 x_min = min(x_min, x)
                 y_max = max(y_max, y)
                 y_min = min(y_min, y)
-                pts.append((x,y))
-        return (x_max + x_min) * 0.5, (y_max + y_min) * 0.5
+        return x_max, x_min, y_max, y_min
 
 # if __name__ == "__main__":
 

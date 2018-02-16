@@ -85,6 +85,12 @@ class Edge(object):
         b = center - radius * unit
         return a, b
 
+    def radial_t_values(self, t, radius):
+        length = self.length
+        ta = ( t * length - radius) / length
+        tb = ( t * length + radius) / length
+        return ta, tb
+
     @property
     def cartesian_points(self):
         return self.p0.tolist(), self.p1.tolist()
@@ -100,6 +106,16 @@ class Edge(object):
     @property
     def length(self):
         return np.linalg.norm(self.p1 - self.p0)
+
+    def t_bounds(self, radius):
+        length = self.length
+        ta = (radius) / length
+        tb = (length - radius) / length
+
+        if tb <= ta:
+            return None, None
+
+        return ta, tb
 
 
 class EdgeFactory(object):

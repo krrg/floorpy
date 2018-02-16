@@ -64,22 +64,42 @@ class SvgRenderer(object):
         unit = edge.unit_vector
         rotated_unit = np.array([-unit[1], unit[0]])
         hinge = a if door.opens_LR == "left" else b
+        latch = b if door.opens_LR == "left" else a
+        angle_dir = "-" if door.opens_LR == "left" else "+"
         endpoint = hinge + door.width * rotated_unit
 
-        self.mark_point(self.scale_point(hinge), 'yellowgreen', radius=16)
-        self.mark_point(self.scale_point(a), 'red', radius=8)
-        self.mark_point(self.scale_point(b), 'yellow', radius=8)
-        self.mark_point(self.scale_point(endpoint), 'blue')
+
+        hinge = self.scale_point(hinge)
+        latch = self.scale_point(latch)
+        endpoint = self.scale_point(endpoint)
+
+        self.group.add(
+            self.drawing.line(hinge, latch, **{
+                "stroke": "white",
+                "stroke-width": 12
+            })
+        )
+        # # self.mark_point(self.scale_point(hinge), 'yellowgreen', radius=16)
+        # self.mark_point(hinge, 'red', radius=8)
+        # self.mark_point(latch, 'yellow', radius=8)
+        # self.mark_point(endpoint, 'blue')
         # Draw a line from hinge to end_point
         self.group.add(
-            self.drawing.line(self.scale_point(hinge), self.scale_point(endpoint), **{
+            self.drawing.line(hinge, endpoint, **{
                 "stroke": svgwrite.rgb(0, 0, 0),
                 "stroke-width": 4,
             })
         )
-        # self.group.add(
-        #     self.drawing.path().push_arc(hinge, )
-        # )
+
+        path = self.drawing.path(**{
+            "fill": "none",
+            "stroke": "black",
+            "stroke-width": 2,
+        })
+        path.push(f"M{latch[0]} {latch[1]}")
+        path.push_arc(endpoint, -1, door.width * self.scaling, large_arc=False, angle_dir=angle_dir, absolute=True)
+        self.group.add(path)
+
 
 
 

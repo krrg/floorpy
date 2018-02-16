@@ -30,7 +30,6 @@ class SimpleGenerator(object):
     def generate_candidate_floorplan(self):
         while True:
             floorplan = FloorPlan([RoomFactory.Rectangle(self.lot_width, self.lot_height)])
-            print(">>>>>", floorplan.rooms)
             while len(floorplan.rooms) < len(self.desired_rooms):
                 largest = self.get_largest_room(floorplan.rooms)
 
@@ -52,12 +51,18 @@ class SimpleGenerator(object):
         while len(visited_rooms) < len(floorplan.rooms):
             current = stack.popleft()
             for neighbor, edge in current.neighbors_and_edges:
-                if neighbor not in visited_rooms:
-                    edge.doors.append(
-                        DoorFactory.interior_door(random.uniform(0.2, 0.8), random.choice([-1, 1]))
-                    )
-                    visited_rooms.add(neighbor)
-                    stack.append(neighbor)
+                if neighbor in visited_rooms:
+                    continue
+                a, b = edge.t_bounds(4)
+                if a is None:
+                    continue
+
+                edge.doors.append(
+                    DoorFactory.interior_door(random.uniform(a, b), random.choice([-1, 1]))
+                )
+
+                visited_rooms.add(neighbor)
+                stack.append(neighbor)
 
 
             # visited_rooms.add(current)

@@ -4,6 +4,8 @@ from core.floorplan import FloorPlan
 from core.edge import Orientation, Edge
 import numpy as np
 from generator.simple_generator import SimpleGenerator
+from evaluator.composite_eval import CompositeEvaluator
+from evaluator.basic_evals import DoorOffEdgeEvaluator, MinimumWidthEvaluator
 
 def main():
 
@@ -42,8 +44,17 @@ def main():
     #     roomA, roomB, roomC, roomD
     # ])
 
-    sg = SimpleGenerator(50, 80, range(10))
-    fp = next(sg.generate_candidate_floorplan())
+    evaluator = CompositeEvaluator([
+        DoorOffEdgeEvaluator(),
+        MinimumWidthEvaluator(8)
+    ])
+    sg = SimpleGenerator(50, 80, range(6))
+
+    for i, fp in enumerate(sg.generate_candidate_floorplan()):
+        print(f"Evaluating {i}")
+        if evaluator.evaluate(fp) >= len(evaluator.evaluators):
+            print("My score is ", evaluator.evaluate(fp))
+            break
 
     renderer.svgrenderer.SvgRenderer(fp).render('out/output.svg')
 

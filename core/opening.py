@@ -1,3 +1,5 @@
+import random
+
 class AbstractEdgeOpening(object):
 
     def __init__(self, t, width, opens_into):
@@ -21,7 +23,7 @@ class DoorFactory(object):
 
     @staticmethod
     def interior_door(t, direction):
-        return Door(t, 6, direction, "left")
+        return Door(t, 6, direction, random.choice(["left", "right"]))
 
     @staticmethod
     def small_interior_door(t, direction):
