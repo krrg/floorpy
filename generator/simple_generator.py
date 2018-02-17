@@ -7,6 +7,7 @@ from core.edge import Orientation
 from core.opening import DoorFactory
 from collections import deque
 
+
 class SimpleGenerator(object):
 
     def __init__(self, lot_width, lot_height, list_o_rooms):
@@ -26,8 +27,18 @@ class SimpleGenerator(object):
 
         return rx, ry
 
+    def get_nearest_value(self, x, search_radius, used_set):
+        for i in range(search_radius):
+            if x + i in used_set:
+                return x + i
+            if x - i in used_set:
+                return x - i
+        return x        
 
     def generate_candidate_floorplan(self):
+        used_rx = set()
+        used_ry = set()
+
         while True:
             floorplan = FloorPlan([RoomFactory.Rectangle(self.lot_width, self.lot_height)])
             while len(floorplan.rooms) < len(self.desired_rooms):
@@ -35,9 +46,16 @@ class SimpleGenerator(object):
 
                 while True:
                     rx, ry = self.get_random_point_in_room(largest)
-                    if largest.contains((rx, ry)):
+
+                    corrected_rx = self.get_nearest_value(rx, 6, used_rx)
+                    corrected_ry = self.get_nearest_value(ry, 6, used_ry)
+
+                    used_rx.add(corrected_rx)
+                    used_ry.add(corrected_ry)
+
+                    if largest.contains((corrected_rx, corrected_ry)):
                         break
-                floorplan.subdivide(rx, ry, random.choice([Orientation.Horizontal, Orientation.Vertical]))
+                floorplan.subdivide(corrected_rx, corrected_ry, random.choice([Orientation.Horizontal, Orientation.Vertical]))
 
             self.add_doors(floorplan)
 
