@@ -30,10 +30,10 @@ class SimpleGenerator(object):
     def get_nearest_value(self, x, search_radius, used_set):
         for i in range(search_radius):
             if x + i in used_set:
-                print(f"Was going to do {x} but corrected to {x + i}")
+                # print(f"Was going to do {x} but corrected to {x + i}")
                 return x + i
             if x - i in used_set:
-                print(f"Was going to do {x} but corrected to {x - i}")
+                # print(f"Was going to do {x} but corrected to {x - i}")
                 return x - i
         return x        
 
@@ -49,14 +49,20 @@ class SimpleGenerator(object):
                 while True:
                     rx, ry = self.get_random_point_in_room(largest)
 
-                    corrected_rx = self.get_nearest_value(rx, 6, used_rx)
-                    corrected_ry = self.get_nearest_value(ry, 6, used_ry)
+                    correction_radius = 9
+                    corrected_rx = self.get_nearest_value(rx, correction_radius, used_rx)
+                    corrected_ry = self.get_nearest_value(ry, correction_radius, used_ry)
 
                     used_rx.add(corrected_rx)
                     used_ry.add(corrected_ry)
 
                     if largest.contains((corrected_rx, corrected_ry)):
                         break
+                    else:
+                        # Necessary to prevent infinite snap-to-grid loops
+                        used_rx.add(rx)
+                        used_ry.add(ry)
+
                 floorplan.subdivide(corrected_rx, corrected_ry, random.choice([Orientation.Horizontal, Orientation.Vertical]))
 
             self.add_doors(floorplan)
@@ -77,8 +83,15 @@ class SimpleGenerator(object):
                 if a is None:
                     continue
 
+                side = random.choice([a, b])
+
+                current_ap = (current.area / current.perimeter)
+                neighbor_ap = (neighbor.area / neighbor.perimeter)
+
+                direction = 1 if current_ap > neighbor_ap else -1
+
                 edge.doors.append(
-                    DoorFactory.interior_door(random.uniform(a, b), random.choice([-1, 1]))
+                    DoorFactory.interior_door(side, direction, "left" if side == b else "right")
                 )
 
                 visited_rooms.add(neighbor)

@@ -1,4 +1,4 @@
 import random
 
-seed = 89358953
+seed = 12456323325353
 brandom = random.Random(seed)

@@ -22,8 +22,8 @@ class Window(AbstractEdgeOpening):
 class DoorFactory(object):
 
     @staticmethod
-    def interior_door(t, direction):
-        return Door(t, 6, direction, random.choice(["left", "right"]))
+    def interior_door(t, direction, left_or_right=None):
+        return Door(t, 6, direction, left_or_right if left_or_right is not None else random.choice(["left", "right"]))
 
     @staticmethod
     def small_interior_door(t, direction):

@@ -48,15 +48,23 @@ def main():
         DoorOffEdgeEvaluator(),
         MinimumWidthEvaluator(8),
         AdjacentHallwayFilter(),
+        LongDeadEndFilter(),
+        LowMeanAreaPerimeterRatio(),
     ])
-    sg = SimpleGenerator(50, 80, range(6))
+
+    rooms = 12
+    width = rooms * 10
+    height = int(rooms * 7.5)
+
+    sg = SimpleGenerator(width, height, range(rooms))
 
     for i, fp in enumerate(sg.generate_candidate_floorplan()):
         print(f"Evaluating {i}")
+        
         if evaluator.evaluate(fp) >= len(evaluator.evaluators):
             print("My score is ", evaluator.evaluate(fp))
             break
-
+        
     renderer.svgrenderer.SvgRenderer(fp).render('out/output.svg')
 
 
