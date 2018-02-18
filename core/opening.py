@@ -1,4 +1,4 @@
-import random
+from bakedrandom import brandom as random
 
 class AbstractEdgeOpening(object):
 

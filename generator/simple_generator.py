@@ -1,7 +1,7 @@
 from core.floorplan import FloorPlan
 from core.room import RoomFactory
 from collections import deque
-import random
+from bakedrandom import brandom as random
 import math
 from core.edge import Orientation
 from core.opening import DoorFactory
@@ -30,8 +30,10 @@ class SimpleGenerator(object):
     def get_nearest_value(self, x, search_radius, used_set):
         for i in range(search_radius):
             if x + i in used_set:
+                print(f"Was going to do {x} but corrected to {x + i}")
                 return x + i
             if x - i in used_set:
+                print(f"Was going to do {x} but corrected to {x - i}")
                 return x - i
         return x        
 
