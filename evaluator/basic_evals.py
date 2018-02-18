@@ -15,6 +15,7 @@ class DoorOffEdgeEvaluator(object):
                         return 0
         return 1
 
+
 class MinimumWidthEvaluator(object):
 
     def __init__(self, threshold):
@@ -30,3 +31,28 @@ class MinimumWidthEvaluator(object):
                 return 0
 
         return 1
+
+
+class AdjacentHallwayFilter(object):
+    # Make sure that very narrow rooms do not spawn next to each other.
+
+    def __init__(self, ap_ratio_threshold=4):
+        self.ap_ratio_threshold = ap_ratio_threshold
+
+    def evaluate(self, floorplan):
+        
+        for room in floorplan.rooms:
+            ap_ratio = room.area / room.perimeter
+            if ap_ratio < self.ap_ratio_threshold:
+                # Then check neighbors to see if any of them have high ap_ratios
+                for neighbor, edge in room.neighbors_and_edges:
+                    neighbor_ap_ratio = neighbor.area / neighbor.perimeter
+                    if neighbor_ap_ratio < self.ap_ratio_threshold:
+                        # Does the edge shared between the two represent a longer edge?
+                        if (neighbor.perimeter / edge.length) > len(neighbor.edges):
+                            return 0
+
+
+        return 1
+
+

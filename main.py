@@ -5,7 +5,7 @@ from core.edge import Orientation, Edge
 import numpy as np
 from generator.simple_generator import SimpleGenerator
 from evaluator.composite_eval import CompositeEvaluator
-from evaluator.basic_evals import DoorOffEdgeEvaluator, MinimumWidthEvaluator
+from evaluator.basic_evals import *
 
 def main():
 
@@ -46,7 +46,8 @@ def main():
 
     evaluator = CompositeEvaluator([
         DoorOffEdgeEvaluator(),
-        MinimumWidthEvaluator(8)
+        MinimumWidthEvaluator(8),
+        AdjacentHallwayFilter(),
     ])
     sg = SimpleGenerator(50, 80, range(6))
 

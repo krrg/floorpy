@@ -19,6 +19,9 @@ class Room(object):
 
         return 0.5*np.abs(np.dot(x,np.roll(y,1))-np.dot(y,np.roll(x,1)))
 
+    @property
+    def perimeter(self):
+        return sum([edge.length for edge in self.edges])
 
     def subdivide_edge(self, close_edge):
 
