@@ -1,3 +1,5 @@
+import scipy.sparse.csgraph
+import numpy as np
 from core.floorplan import FloorPlan
 from core.room import RoomFactory
 from collections import deque
@@ -35,13 +37,14 @@ class SimpleGenerator(object):
             if x - i in used_set:
                 # print(f"Was going to do {x} but corrected to {x - i}")
                 return x - i
-        return x        
+        return x
 
     def generate_candidate_floorplan(self):
-        used_rx = set()
-        used_ry = set()
 
         while True:
+            used_rx = set()
+            used_ry = set()
+
             floorplan = FloorPlan([RoomFactory.Rectangle(self.lot_width, self.lot_height)])
             while len(floorplan.rooms) < len(self.desired_rooms):
                 largest = self.get_largest_room(floorplan.rooms)
@@ -65,11 +68,12 @@ class SimpleGenerator(object):
 
                 floorplan.subdivide(corrected_rx, corrected_ry, random.choice([Orientation.Horizontal, Orientation.Vertical]))
 
-            self.add_doors(floorplan)
+            # self.add_doors_depth_first(floorplan)
+            self.add_doors_minimum_spanning_tree(floorplan)
 
             yield floorplan
 
-    def add_doors(self, floorplan):
+    def add_doors_depth_first(self, floorplan):
         visited_rooms = set([floorplan.rooms[0]])
 
         # pick starter room
@@ -96,6 +100,47 @@ class SimpleGenerator(object):
 
                 visited_rooms.add(neighbor)
                 stack.append(neighbor)
+
+    def add_doors_minimum_spanning_tree(self, floorplan):
+
+        matrix = np.full((len(floorplan.rooms), len(floorplan.rooms)), np.inf, dtype=np.float32)
+
+        indexes = {}
+        reverse_indexes = {}
+        for i, room in enumerate(floorplan.rooms):
+            indexes[room] = i
+            reverse_indexes[i] = room
+
+        for room in floorplan.rooms:
+            for neighbor in room.neighbors:
+                i = indexes[room]
+                j = indexes[neighbor]
+                matrix[i, j] = 1
+
+        distances = scipy.sparse.csgraph.minimum_spanning_tree(matrix)
+        # for di in distances:
+            # print("Distance", di)
+        for i, j in zip(*np.where(distances.toarray() == 1)):
+            roomA = reverse_indexes[i]
+            roomB = reverse_indexes[j]
+            for neighbor, edge in roomA.neighbors_and_edges:
+                if neighbor is roomB:
+                    a, b = edge.t_bounds(4)
+                    if a is None:
+                        continue
+
+                    side = random.choice([a, b])
+
+                    current_ap = (roomA.area / roomA.perimeter)
+                    neighbor_ap = (neighbor.area / neighbor.perimeter)
+
+                    direction = 1 if current_ap > neighbor_ap else -1
+
+                    edge.doors.append(
+                        DoorFactory.interior_door(side, direction, "left" if side == b else "right")
+                    )
+
+
 
 
             # visited_rooms.add(current)

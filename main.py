@@ -50,6 +50,7 @@ def main():
         AdjacentHallwayFilter(),
         LongDeadEndFilter(),
         LowMeanAreaPerimeterRatio(),
+        # HighTravelCostBetweenRoomsFilter(),
     ])
 
     rooms = 12
@@ -60,13 +61,19 @@ def main():
 
     for i, fp in enumerate(sg.generate_candidate_floorplan()):
         print(f"Evaluating {i}")
-        
-        if evaluator.evaluate(fp) >= len(evaluator.evaluators):
-            print("My score is ", evaluator.evaluate(fp))
+
+        score = evaluator.evaluate(fp)
+        if score >= len(evaluator.evaluators):
+            print("My score is ", score)
             break
-        
+
     renderer.svgrenderer.SvgRenderer(fp).render('out/output.svg')
 
+def garbage_fire():
+    import generator.subdivide_tree_generator
+    rootnode = generator.subdivide_tree_generator.SubdivideTreeGenerator().generate_tree_from_indexes(range(12))
+    print(rootnode)
 
 if __name__ == "__main__":
-    main()
+    # main()
+    garbage_fire()

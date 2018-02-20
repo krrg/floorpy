@@ -41,7 +41,7 @@ class AdjacentHallwayFilter(object):
         self.ap_ratio_threshold = ap_ratio_threshold
 
     def evaluate(self, floorplan):
-        
+
         for room in floorplan.rooms:
             ap_ratio = room.area / room.perimeter
             if ap_ratio < self.ap_ratio_threshold:
@@ -73,23 +73,56 @@ class LongDeadEndFilter(object):
 
         return 1
 
-# import statistics
-# class LowMeanAreaPerimeterRatio(object):
+import statistics
+class LowMeanAreaPerimeterRatio(object):
 
-#     def __init__(self, ap_ratio_threshold=6.67):
-#         self.ap_ratio_threshold = ap_ratio_threshold
+    def __init__(self, ap_ratio_threshold=6.67):
+        self.ap_ratio_threshold = ap_ratio_threshold
 
-#     def evaluate(self, floorplan):
-#         median_ap = statistics.median([room.area / room.perimeter for room in floorplan.rooms])
-        
-#         if median_ap < self.ap_ratio_threshold:
-#             print(f"Failed on Median AP is too low {median_ap}")
-#             return 0
-#         else:
-#             return 1
-            
+    def evaluate(self, floorplan):
+        median_ap = statistics.median([room.area / room.perimeter for room in floorplan.rooms])
 
-        
-        
+        if median_ap < self.ap_ratio_threshold:
+            print(f"Failed on Median AP is too low {median_ap}")
+            return 0
+        else:
+            return 1
 
+
+import scipy
+import scipy.sparse
+import scipy.sparse.csgraph
+import numpy as np
+class HighTravelCostBetweenRoomsFilter(object):
+
+    def floorplan_to_adjacency_matrix(self, floorplan):
+        matrix = np.full((len(floorplan.rooms), len(floorplan.rooms)), np.inf, dtype=np.float32)
+
+        indexes = {}
+        for i, room in enumerate(floorplan.rooms):
+            indexes[room] = i
+
+        for room in floorplan.rooms:
+            for neighbor, edge in room.neighbors_and_edges:
+                if len(edge.doors) > 0:
+                    i = indexes[room]
+                    j = indexes[neighbor]
+                    matrix[i, j] = 1
+
+        return matrix
+
+
+    def evaluate(self, floorplan):
+        distances = scipy.sparse.csgraph.floyd_warshall(
+            self.floorplan_to_adjacency_matrix(floorplan),
+            directed=True
+        )
+
+        max_path_length = distances.max()
+        print(max_path_length)
+
+        if max_path_length < len(floorplan.rooms) * 0.35:
+            return 1
+        else:
+            return 0
 
