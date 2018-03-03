@@ -53,10 +53,6 @@ def main():
         # HighTravelCostBetweenRoomsFilter(),
     ])
 
-    rooms = 600
-    width = 2400
-    height = 1200
-
     sg = SimpleGenerator(width, height, range(rooms))
 
     for i, fp in enumerate(sg.generate_candidate_floorplan()):
@@ -70,18 +66,10 @@ def main():
     renderer.svgrenderer.SvgRenderer(fp).render('out/output.svg')
 
 def garbage_fire():
-    import generator.subdivide_tree_generator
+    from generator.tree_judge import TreeJudge
 
-    list_o_rooms = [(0.5, "Bath"), (2, "Kitchen"), (1, "Bedroom"), (4, "Living")]
-    import itertools
-    list_o_rooms = list(itertools.chain(list_o_rooms*1))
-
-    rootnode = generator.subdivide_tree_generator.SubdivideTreeGenerator().generate_tree_from_indexes(range(len(list_o_rooms)))
-    g = generator.subdivide_tree_generator.SubdivideTreeToFloorplan(80, 60, list_o_rooms, rootnode)
-    fp = g.generate_candidate_floorplan()
+    fp = TreeJudge().create_perfect_floorplan()
     renderer.svgrenderer.SvgRenderer(fp).render('out/output.svg')
-
-
 
 if __name__ == "__main__":
     # main()

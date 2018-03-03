@@ -16,30 +16,36 @@ class SubdivideTreeToFloorplan(object):
     def generate_candidate_floorplan(self):
         floorplan = FloorPlan([RoomFactory.Rectangle(self.lot_width, self.lot_height)])
         initial_room = floorplan.rooms[0]
-        self.subdivide_room(floorplan, initial_room, self.rootnode)
+        rootscore = self.subdivide_room(floorplan, initial_room, self.rootnode)
+
+        # print(f"Root score is {rootscore}")
+
         return floorplan
 
     def subdivide_room(self, floorplan, room, node):
         if len(node.children) <= 1:
-            room.label = self.list_o_rooms[node.room_indexes[0]][1]
-            return
+            groom = self.list_o_rooms[node.room_indexes[0]]
+            room.label = groom.label
+            node.score = groom.score(room)
+            return node.score
 
-        a1 = sum([ self.list_o_rooms[i][0] for i in node.children[0].room_indexes])
-        a2 = sum([ self.list_o_rooms[i][0] for i in node.children[1].room_indexes])
+        a1 = sum([ self.list_o_rooms[i].area for i in node.children[0].room_indexes])
+        a2 = sum([ self.list_o_rooms[i].area for i in node.children[1].room_indexes])
 
         # a1 = len(node.children[0].room_indexes)
         # a2 = len(node.children[1].room_indexes)
 
         S = (a1 * (1 - node.t)) / (a1 * (1 - node.t) + a2 * node.t)
 
-        print(f"Current room orientation is {room.orientation} and children are: {[self.list_o_rooms[i][1] for i in node.room_indexes]}")
         node.orientation = room.orientation.negate()
 
         roomA, roomB = floorplan.proportional_subdivide(S, node.orientation, room)
         # TODO: We are not sure what order these things pop out.
 
-        self.subdivide_room(floorplan, roomA, node.children[0])
-        self.subdivide_room(floorplan, roomB, node.children[1])
+        scoreA = self.subdivide_room(floorplan, roomA, node.children[0])
+        scoreB = self.subdivide_room(floorplan, roomB, node.children[1])
+        node.score = min(scoreA, scoreB)
+        return node.score
 
 
 class SubdivideTreeGenerator(object):
@@ -52,6 +58,7 @@ class SubdivideTreeGenerator(object):
             order=random.choice([-1, 1]),
             t=0.5,
             room_indexes=list(indexes),
+            score=None
         )
         self.generate_tree(rootnode)
         return rootnode
@@ -69,6 +76,7 @@ class SubdivideTreeGenerator(object):
             order=random.choice([-1, 1]),
             t=0.5,
             room_indexes=left,
+            score=None
         )
         right_child = Node(
             orientation=random.choice([Orientation.Horizontal, Orientation.Vertical]),
@@ -77,6 +85,7 @@ class SubdivideTreeGenerator(object):
             order=random.choice([-1, 1]),
             t=0.5,
             room_indexes=right,
+            score=None
         )
         rootnode.children.extend([left_child, right_child])
         self.generate_tree(left_child)

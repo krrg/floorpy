@@ -23,6 +23,14 @@ class Room(object):
     def perimeter(self):
         return sum([edge.length for edge in self.edges])
 
+    @property
+    def min_aspect_ratio(self):
+        x_max, x_min, y_max, y_min = self.max_min_xy
+        width = x_max - x_min
+        height = y_max - y_min
+        return min(
+            width / height, height / width
+        )
 
 
     def subdivide_edge(self, close_edge):

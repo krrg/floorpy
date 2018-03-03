@@ -8,4 +8,5 @@ Node = recordclass("Node", [
     "room_indexes",
     "orientation",
     "order",
+    "score",
 ])
