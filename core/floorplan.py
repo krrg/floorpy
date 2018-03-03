@@ -12,10 +12,7 @@ class FloorPlan(object):
         p = np.array([x,y])
         p *= self.scale
 
-        if direction == Orientation.Horizontal:
-            direction = np.array([1, 0])
-        else:
-            direction = np.array([0, 1])
+        direction = direction.to_unit_vector()
 
         success = False
         for room in self.rooms:
@@ -27,3 +24,9 @@ class FloorPlan(object):
             self.rooms.append(roomB)
             break
 
+    def proportional_subdivide(self, S, direction, room):
+        roomA, roomB = room.proportional_subdivide(S, direction)
+        self.rooms.remove(room)
+        self.rooms.append(roomA)
+        self.rooms.append(roomB)
+        return roomA, roomB

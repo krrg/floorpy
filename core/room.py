@@ -23,6 +23,8 @@ class Room(object):
     def perimeter(self):
         return sum([edge.length for edge in self.edges])
 
+
+
     def subdivide_edge(self, close_edge):
 
         if len(close_edge) == 1:
@@ -178,6 +180,27 @@ class Room(object):
                 y_max = max(y_max, y)
                 y_min = min(y_min, y)
         return x_max, x_min, y_max, y_min
+
+    def proportional_subdivide(self, S_area_percentage, orientation):
+        x, y = self.center
+        x_max, x_min, y_max, y_min = self.max_min_xy
+
+        if orientation == Orientation.Vertical:
+            x = (1 - S_area_percentage) * x_min + S_area_percentage * x_max
+        else:
+            y = (1 - S_area_percentage) * y_max + S_area_percentage * y_min
+
+        x, y = round(x), round(y)
+
+        return self.subdivide(np.array([x, y]), orientation.to_unit_vector())
+
+    @property
+    def orientation(self):
+        x_max, x_min, y_max, y_min = self.max_min_xy
+        width = abs(x_max - x_min)
+        height = abs(y_max - y_min)
+        return Orientation.Vertical if height > width else Orientation.Horizontal
+
 
 # if __name__ == "__main__":
 

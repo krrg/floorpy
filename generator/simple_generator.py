@@ -68,7 +68,7 @@ class SimpleGenerator(object):
 
                 floorplan.subdivide(corrected_rx, corrected_ry, random.choice([Orientation.Horizontal, Orientation.Vertical]))
 
-            # self.add_doors_depth_first(floorplan)
+            self.add_doors_depth_first(floorplan)
             self.add_doors_minimum_spanning_tree(floorplan)
 
             yield floorplan

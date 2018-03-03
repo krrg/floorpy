@@ -50,7 +50,8 @@ class SvgRenderer(object):
         # self.render_door(edge, DoorFactory.interior_door(0.5, -1))
 
     def render_room_label(self, room):
-        label = str(room.area).upper()
+        print(f"I am looking at room {room.label}")
+        label = str(room.label).upper() + " " + str(room.area)
         x, y = self.scale_point(room.center)
         self.group.add(
             self.drawing.text(label, x=[x], y=[y], **{

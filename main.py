@@ -45,17 +45,17 @@ def main():
     # ])
 
     evaluator = CompositeEvaluator([
-        DoorOffEdgeEvaluator(),
-        MinimumWidthEvaluator(8),
-        AdjacentHallwayFilter(),
-        LongDeadEndFilter(),
-        LowMeanAreaPerimeterRatio(),
+        # DoorOffEdgeEvaluator(),
+        # MinimumWidthEvaluator(6),
+        # # AdjacentHallwayFilter(),
+        # # LongDeadEndFilter(),
+        # LowMeanAreaPerimeterRatio(),
         # HighTravelCostBetweenRoomsFilter(),
     ])
 
-    rooms = 12
-    width = rooms * 10
-    height = int(rooms * 7.5)
+    rooms = 600
+    width = 2400
+    height = 1200
 
     sg = SimpleGenerator(width, height, range(rooms))
 
@@ -71,8 +71,17 @@ def main():
 
 def garbage_fire():
     import generator.subdivide_tree_generator
-    rootnode = generator.subdivide_tree_generator.SubdivideTreeGenerator().generate_tree_from_indexes(range(12))
-    print(rootnode)
+
+    list_o_rooms = [(0.5, "Bath"), (2, "Kitchen"), (1, "Bedroom"), (4, "Living")]
+    import itertools
+    list_o_rooms = list(itertools.chain(list_o_rooms*1))
+
+    rootnode = generator.subdivide_tree_generator.SubdivideTreeGenerator().generate_tree_from_indexes(range(len(list_o_rooms)))
+    g = generator.subdivide_tree_generator.SubdivideTreeToFloorplan(80, 60, list_o_rooms, rootnode)
+    fp = g.generate_candidate_floorplan()
+    renderer.svgrenderer.SvgRenderer(fp).render('out/output.svg')
+
+
 
 if __name__ == "__main__":
     # main()

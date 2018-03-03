@@ -1,6 +1,7 @@
-from collections import namedtuple
+# from collections import namedtuple
+from recordclass import recordclass
 
-Node = namedtuple("Node", [
+Node = recordclass("Node", [
     "t",
     "children",
     "padding",

@@ -148,6 +148,12 @@ class Orientation(enum.Enum):
     def negate(self):
         return Orientation.Horizontal if self == Orientation.Vertical else Orientation.Vertical
 
+    def to_unit_vector(self):
+        if self == Orientation.Horizontal:
+            return np.array([1, 0])
+        else:
+            return np.array([0, 1])
+
 
 def pnt2line(pnt, start, end):
 
