@@ -1,8 +1,11 @@
+import random
+import string
+
 class Groom(object):
 
     def __init__(self, area, label):
         self.area = area
-        self.label = label
+        self.label = label + "_" + str(random.randint(0, 999))
 
     def score(self, actual_room):
         return 1.0

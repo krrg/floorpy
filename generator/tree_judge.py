@@ -1,7 +1,10 @@
 import generator.subdivide_tree_generator
 from generator.groom import LivingGroom, BedGroom, BathGroom
 import itertools
-
+from generator.genetic_tree_shaker import GeneticTreeShaker
+from generator.subdivide_tree_generator import *
+from generator.groom import *
+import renderer.svgrenderer
 
 class TreeJudge(object):
 
@@ -12,18 +15,37 @@ class TreeJudge(object):
         max_score = float('-inf')
         best_plan = None
 
-        for i in range(500):
+        for i in range(1):
+            print("We are evaluating population ", i)
 
-            list_o_rooms = [LivingGroom(4), BedGroom(2), BathGroom(1), BedGroom(2)]
-            list_o_rooms = list(itertools.chain(list_o_rooms*4))
+            list_o_rooms = [LivingGroom(4), BedGroom(2), BathGroom(1), BedGroom(2)] + [LivingGroom(4), BedGroom(2), BathGroom(1), BedGroom(2)] + [LivingGroom(4), BedGroom(2), BathGroom(1), BedGroom(2)]
+    # list_o_rooms = list(itertools.chain(list_o_rooms*3))
 
-            rootnode = generator.subdivide_tree_generator.SubdivideTreeGenerator().generate_tree_from_indexes(range(len(list_o_rooms)))
-            g = generator.subdivide_tree_generator.SubdivideTreeToFloorplan(80, 60, list_o_rooms, rootnode)
+            adam = SubdivideTreeGenerator().generate_tree_from_indexes(
+                range(len(list_o_rooms))
+            )
+
+            salt = GeneticTreeShaker(
+                adam,
+                list_o_rooms
+            )
+
+            # g = SubdivideTreeToFloorplan(80, 60, list_o_rooms, adam)
+            # fp = g.generate_candidate_floorplan()
+            # renderer.svgrenderer.SvgRenderer(fp).render('out/output.svg')
+            # input("[PAUSED]")
+
+            for i in range(10):
+                salt.run_generation()
+                print(f"The best score so far is {salt.population[0].score}")
+
+            g = SubdivideTreeToFloorplan(80, 60, list_o_rooms, salt.population[0])
             fp = g.generate_candidate_floorplan()
 
-            if rootnode.score > max_score:
+            if salt.population[0].score > max_score:
                 best_plan = fp
-                max_score = rootnode.score
+                max_score = salt.population[0].score
+                renderer.svgrenderer.SvgRenderer(fp).render('out/output.svg')
 
         print("Max score was", max_score)
         return best_plan

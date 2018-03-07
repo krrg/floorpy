@@ -29,21 +29,23 @@ class SubdivideTreeToFloorplan(object):
             node.score = groom.score(room)
             return node.score
 
-        a1 = sum([ self.list_o_rooms[i].area for i in node.children[0].room_indexes])
-        a2 = sum([ self.list_o_rooms[i].area for i in node.children[1].room_indexes])
+        children = node.children[::node.order]
+
+        a1 = sum([ self.list_o_rooms[i].area for i in children[0].room_indexes])
+        a2 = sum([ self.list_o_rooms[i].area for i in children[1].room_indexes])
 
         # a1 = len(node.children[0].room_indexes)
         # a2 = len(node.children[1].room_indexes)
 
         S = (a1 * (1 - node.t)) / (a1 * (1 - node.t) + a2 * node.t)
 
-        node.orientation = room.orientation.negate()
+        # node.orientation = room.orientation.negate()
 
         roomA, roomB = floorplan.proportional_subdivide(S, node.orientation, room)
         # TODO: We are not sure what order these things pop out.
 
-        scoreA = self.subdivide_room(floorplan, roomA, node.children[0])
-        scoreB = self.subdivide_room(floorplan, roomB, node.children[1])
+        scoreA = self.subdivide_room(floorplan, roomA, children[0])
+        scoreB = self.subdivide_room(floorplan, roomB, children[1])
         node.score = min(scoreA, scoreB)
         return node.score
 

@@ -30,3 +30,39 @@ class FloorPlan(object):
         self.rooms.append(roomA)
         self.rooms.append(roomB)
         return roomA, roomB
+
+    @property
+    def edges(self):
+        edge_list = list()
+        edge_set = set()
+        for room in self.rooms:
+            for edge in room.edges:
+                if edge in edge_set:
+                    continue
+                edge_list.append(edge)
+                edge_set.add(edge)
+        return edge_list
+
+    def clear_doors(self):
+        for room in self.rooms:
+            for edge in room.edges:
+                edge.doors = []
+
+    def add_doors(self, door_vector):
+        edge_list = self.edges
+
+        if len(door_vector) != len(edge_list):
+            raise Exception("Differing length of door vector and edges")
+
+        for is_door, edge in zip(door_vector, edge_list):
+            if is_door:
+                a, b = edge.t_bounds(4)
+                if a is None:
+                    continue
+
+                side = random.choice([a, b])
+                direction = 1
+
+                edge.doors.append(
+                    DoorFactory.interior_door(side, direction, "left" if side == b else "right")
+                )
