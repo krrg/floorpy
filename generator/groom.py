@@ -39,9 +39,17 @@ class BedGroom(Groom):
     def door_score(self, actual_room):
         door_counter = 0
         multiplier = 1
-        for edge in actual_room.edges:
-            if type(edge.opposite_room(actual_room)) is BathGroom:
+        for neighbor, edge in actual_room.neighbors_and_edges:
+            if len(edge.doors) == 0:
                 continue
+
+            # Don't penalize bathgrooms
+            if type(neighbor.groom) is BathGroom:
+                continue
+
+            # Penalize bedroom to bedroom
+            if type(neighbor.groom) is BedGroom:
+                multiplier = 0.25
 
             door_counter += len(edge.doors)
             if edge.opposite_room(actual_room) is None and len(edge.doors) > 0:

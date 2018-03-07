@@ -1,4 +1,3 @@
-import copy
 from bakedrandom import brandom as random
 from generator.node import Node
 from generator.subdivide_tree_generator import *

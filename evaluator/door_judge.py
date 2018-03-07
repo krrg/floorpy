@@ -17,7 +17,17 @@ class DoorJudge(object):
     def score_connectivity(self, fp):
         islands = self.get_connectivity_islands(fp)
         largest_island = len(max(islands, key=lambda i: len(i)))
-        return largest_island / len(fp.rooms)
+        return (largest_island / len(fp.rooms))**2
+
+    def score_individual_doors(self, fp):
+        door_score = 0
+
+        for room in fp.rooms:
+            room_door_score = room.groom.door_score(room) ** 2
+            door_score += room_door_score
+
+        door_score /= len(fp.rooms)
+        return door_score
 
     def get_connectivity_islands(self, fp):
         rooms = set(fp.rooms)
@@ -39,16 +49,6 @@ class DoorJudge(object):
             islands.append(connected)
 
         return islands
-
-    def score_individual_doors(self, fp):
-        door_score = 0
-
-        for room in fp.rooms:
-            room_door_score = room.groom.door_score(room) ** 2
-            door_score += room_door_score
-
-        door_score /= len(fp.rooms)
-        return door_score
 
     def create_perfect_doorplan(self, fp):
         max_score = float('-inf')
