@@ -7,7 +7,10 @@ class Groom(object):
         self.area = area
         self.label = label + "_" + str(random.randint(0, 999))
 
-    def score(self, actual_room):
+    def tree_score(self, actual_room):
+        return 1.0
+
+    def door_score(self, actual_room):
         return 1.0
 
 
@@ -17,13 +20,36 @@ class LivingGroom(Groom):
         super().__init__(area, "Living")
 
 
+class DiningGroom(LivingGroom):
+    pass
+
+
+class KitchenGroom(LivingGroom):
+    pass
+
+
 class BedGroom(Groom):
 
     def __init__(self, area):
         super().__init__(area, "Bedroom")
 
-    def score(self, actual_room):
+    def tree_score(self, actual_room):
         return min(0.5, actual_room.min_aspect_ratio) / 0.5
+
+    def door_score(self, actual_room):
+        door_counter = 0
+        multiplier = 1
+        for edge in actual_room.edges:
+            if type(edge.opposite_room(actual_room)) is BathGroom:
+                continue
+
+            door_counter += len(edge.doors)
+            if edge.opposite_room(actual_room) is None and len(edge.doors) > 0:
+                multiplier = 0.25
+
+        if door_counter == 0:
+            return 0
+        return multiplier / door_counter
 
 
 class BathGroom(Groom):
@@ -31,8 +57,20 @@ class BathGroom(Groom):
     def __init__(self, area):
         super().__init__(area, "Bath")
 
-    def score(self, actual_room):
+    def tree_score(self, actual_room):
         return min(0.75, actual_room.min_aspect_ratio) / 0.75
+
+    def door_score(self, actual_room):
+        door_counter = 0
+        multiplier = 1
+        for edge in actual_room.edges:
+            door_counter += len(edge.doors)
+            if edge.opposite_room(actual_room) is None and len(edge.doors) > 0:
+                multiplier = 0.25
+
+        if door_counter == 0:
+            return 0
+        return multiplier / door_counter
 
 
 

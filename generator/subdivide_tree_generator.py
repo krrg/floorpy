@@ -25,8 +25,8 @@ class SubdivideTreeToFloorplan(object):
     def subdivide_room(self, floorplan, room, node):
         if len(node.children) <= 1:
             groom = self.list_o_rooms[node.room_indexes[0]]
-            room.label = groom.label
-            node.score = groom.score(room)
+            room.groom = groom
+            node.score = groom.tree_score(room)
             return node.score
 
         children = node.children[::node.order]

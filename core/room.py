@@ -4,9 +4,9 @@ import numpy as np
 
 class Room(object):
 
-    def __init__(self, edges, label="Room"):
+    def __init__(self, edges):
         self.edges = edges
-        self.label = label
+        self.groom = None
 
     @property
     def area(self):

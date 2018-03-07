@@ -11,12 +11,15 @@ from generator.subdivide_tree_generator import *
 from generator.groom import *
 from generator.tree_judge import TreeJudge
 from generator.random_door_generator import RandomDoorGenerator
+from evaluator.door_judge import DoorJudge
 
 def garbage_fire():
 
     fp = TreeJudge().create_perfect_floorplan()
-    RandomDoorGenerator.ran
+    fp = DoorJudge().create_perfect_doorplan(fp)
 
+    # door_vector = RandomDoorGenerator.create_door_vector(len(fp.edges))
+    # fp.add_doors(door_vector)
 
     renderer.svgrenderer.SvgRenderer(fp).render('out/output.svg')
 

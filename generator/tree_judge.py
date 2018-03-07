@@ -6,6 +6,7 @@ from generator.subdivide_tree_generator import *
 from generator.groom import *
 import renderer.svgrenderer
 
+
 class TreeJudge(object):
 
     def __init__(self):
@@ -15,10 +16,10 @@ class TreeJudge(object):
         max_score = float('-inf')
         best_plan = None
 
-        for i in range(1):
+        for i in range(5):
             print("We are evaluating population ", i)
 
-            list_o_rooms = [LivingGroom(4), BedGroom(2), BathGroom(1), BedGroom(2)] + [LivingGroom(4), BedGroom(2), BathGroom(1), BedGroom(2)] + [LivingGroom(4), BedGroom(2), BathGroom(1), BedGroom(2)]
+            list_o_rooms = [LivingGroom(4), BedGroom(2), BathGroom(1), BedGroom(2)] + [LivingGroom(4), BedGroom(2), BathGroom(1), BedGroom(2)]
     # list_o_rooms = list(itertools.chain(list_o_rooms*3))
 
             adam = SubdivideTreeGenerator().generate_tree_from_indexes(
@@ -37,7 +38,8 @@ class TreeJudge(object):
 
             for i in range(10):
                 salt.run_generation()
-                print(f"The best score so far is {salt.population[0].score}")
+                import statistics
+                print(f"The best score so far is {statistics.median([tree.score for tree in salt.population])}")
 
             g = SubdivideTreeToFloorplan(80, 60, list_o_rooms, salt.population[0])
             fp = g.generate_candidate_floorplan()

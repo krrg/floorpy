@@ -1,5 +1,7 @@
 import numpy as np
 from core.edge import Orientation
+from bakedrandom import brandom as random
+from core.opening import Door, DoorFactory
 
 class FloorPlan(object):
 
@@ -61,7 +63,7 @@ class FloorPlan(object):
                     continue
 
                 side = random.choice([a, b])
-                direction = 1
+                direction = -1
 
                 edge.doors.append(
                     DoorFactory.interior_door(side, direction, "left" if side == b else "right")

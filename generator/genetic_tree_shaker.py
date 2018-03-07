@@ -9,9 +9,9 @@ class GeneticTreeShaker(object):
             adam,
             list_o_rooms,
             population_size=15,
-            num_crossovers=40,
-            prob_orientation_mutates=0.4,
-            prob_order_mutates=0.4,
+            num_crossovers=30,
+            prob_orientation_mutates=0.35,
+            prob_order_mutates=0.35,
         ):
 
         adam.score = 0
