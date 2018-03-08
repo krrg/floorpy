@@ -34,7 +34,17 @@ class BedGroom(Groom):
         super().__init__(area, "Bedroom")
 
     def tree_score(self, actual_room):
-        return min(0.5, actual_room.min_aspect_ratio) / 0.5
+        multiplier = 1.0
+        non_bedgrooms = 0
+        
+        for neighbor, edge in actual_room.neighbors_and_edges:
+            if type(neighbor.groom) is not BedGroom:
+                non_bedgrooms += 1
+
+        if non_bedgrooms == 0:
+            multiplier = 0.1
+
+        return multiplier * min(0.5, actual_room.min_aspect_ratio) / 0.5
 
     def door_score(self, actual_room):
         door_counter = 0
