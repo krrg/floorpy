@@ -5,6 +5,9 @@ from generator.genetic_tree_shaker import GeneticTreeShaker
 from generator.subdivide_tree_generator import *
 from generator.groom import *
 import renderer.svgrenderer
+from generator.genetic_door_shaker import GeneticDoorShaker
+from evaluator.door_judge import DoorJudge
+from generator.random_door_generator import RandomDoorGenerator
 
 
 class TreeJudge(object):
@@ -16,7 +19,7 @@ class TreeJudge(object):
         max_score = float('-inf')
         best_plan = None
 
-        for i in range(5):
+        for i in range(50):
             print("We are evaluating population ", i)
 
             list_o_rooms = [LivingGroom(4), BedGroom(2), BathGroom(1), BedGroom(2)] + [LivingGroom(4), BedGroom(2), BathGroom(1), BedGroom(2)]
@@ -31,11 +34,6 @@ class TreeJudge(object):
                 list_o_rooms
             )
 
-            # g = SubdivideTreeToFloorplan(80, 60, list_o_rooms, adam)
-            # fp = g.generate_candidate_floorplan()
-            # renderer.svgrenderer.SvgRenderer(fp).render('out/output.svg')
-            # input("[PAUSED]")
-
             for i in range(10):
                 salt.run_generation()
                 import statistics
@@ -44,12 +42,27 @@ class TreeJudge(object):
             g = SubdivideTreeToFloorplan(80, 60, list_o_rooms, salt.population[0])
             fp = g.generate_candidate_floorplan()
 
-            if salt.population[0].score > max_score:
-                best_plan = fp
-                max_score = salt.population[0].score
+            # Check the doors
+            shaker = GeneticDoorShaker(fp, [ RandomDoorGenerator.create_door_vector(len(fp.edges)) for i in range(20)])
+            for i in range(200):
+                shaker.run_generation()
+
+
+            composite_score = shaker.population[0].score + salt.population[0].score
+
+            if composite_score > max_score:
+                best_plan = fp, shaker.population[0].vector
+                max_score = composite_score
+                fp.clear_doors()
+                fp.add_doors(shaker.population[0].vector)
                 renderer.svgrenderer.SvgRenderer(fp).render('out/output.svg')
 
         print("Max score was", max_score)
-        return best_plan
+
+        fp, vector = best_plan
+        fp.clear_doors()
+        fp.add_doors(vector)
+
+        return fp
 
 

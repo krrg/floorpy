@@ -17,13 +17,7 @@ from evaluator.door_judge import DoorJudge
 def garbage_fire():
 
     fp = TreeJudge().create_perfect_floorplan()
-    shaker = GeneticDoorShaker(fp, [ RandomDoorGenerator.create_door_vector(len(fp.edges)) for i in range(20)])
 
-    for i in range(50):
-        shaker.run_generation()
-
-    fp.clear_doors()
-    fp.add_doors(shaker.population[0].vector)
 
     # door_vector = RandomDoorGenerator.create_door_vector(len(fp.edges))
     # fp.add_doors(door_vector)

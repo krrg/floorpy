@@ -49,11 +49,11 @@ class BedGroom(Groom):
 
             # Penalize bedroom to bedroom
             if type(neighbor.groom) is BedGroom:
-                multiplier = 0.25
+                multiplier = 0.1
 
             door_counter += len(edge.doors)
             if edge.opposite_room(actual_room) is None and len(edge.doors) > 0:
-                multiplier = 0.25
+                multiplier = 0.1
 
         if door_counter == 0:
             return 0

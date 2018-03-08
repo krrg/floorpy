@@ -23,7 +23,7 @@ class DoorJudge(object):
         door_score = 0
 
         for room in fp.rooms:
-            room_door_score = room.groom.door_score(room) ** 2
+            room_door_score = room.groom.door_score(room)**2
             door_score += room_door_score
 
         door_score /= len(fp.rooms)

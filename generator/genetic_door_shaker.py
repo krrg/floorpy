@@ -32,7 +32,7 @@ class GeneticDoorShaker(object):
         for candidate in candidates:
             dj = DoorJudge()
             self.fp.clear_doors()
-            self.fp.add_doors(candidate)
+            self.fp.add_doors(candidate.vector)
 
             cscore = dj.score_connectivity(self.fp)
             dscore = dj.score_individual_doors(self.fp)
