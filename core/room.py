@@ -25,12 +25,23 @@ class Room(object):
 
     @property
     def min_aspect_ratio(self):
-        x_max, x_min, y_max, y_min = self.max_min_xy
-        width = x_max - x_min
-        height = y_max - y_min
+        width = self.width
+        height = self.height
         return min(
             width / height, height / width
         )
+
+    @property
+    def width(self):
+        x_max, x_min, y_max, y_min = self.max_min_xy
+        width = x_max - x_min
+        return width
+
+    @property
+    def height(self):
+        x_max, x_min, y_max, y_min = self.max_min_xy
+        height = y_max - y_min
+        return height
 
 
     def subdivide_edge(self, close_edge):

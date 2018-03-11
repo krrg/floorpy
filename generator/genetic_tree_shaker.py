@@ -7,10 +7,13 @@ class GeneticTreeShaker(object):
     def __init__(self,
             adam,
             list_o_rooms,
+            instantiator,
             population_size=15,
             num_crossovers=30,
             prob_orientation_mutates=0.35,
             prob_order_mutates=0.35,
+            prob_t_mutates=0.2,
+            t_mutation_magnitude=0.1
         ):
 
         adam.score = 0
@@ -20,6 +23,9 @@ class GeneticTreeShaker(object):
         self.list_o_rooms = list_o_rooms
         self.prob_order_mutates = prob_order_mutates
         self.prob_orientation_mutates = prob_orientation_mutates
+        self.instantiator = instantiator
+        self.prob_t_mutates = prob_t_mutates
+        self.t_mutation_magnitude = t_mutation_magnitude
 
     def run_generation(self):
         candidates = self.crossover_population()
@@ -35,8 +41,7 @@ class GeneticTreeShaker(object):
 
     def score_candidates(self, candidates):
         for candidate in candidates:
-            g = SubdivideTreeToFloorplan(80, 60, self.list_o_rooms, candidate)
-            fp = g.generate_candidate_floorplan()
+            fp = self.instantiator.generate_candidate_floorplan(candidate)
 
     def crossover_population(self):
         candidates = []
@@ -71,6 +76,9 @@ class GeneticTreeShaker(object):
             candidate.order *= -1
         if random.random() < self.prob_orientation_mutates:
             candidate.orientation = candidate.orientation.negate()
+        if random.random() < self.prob_t_mutates:
+            candidate.t += random.uniform(-self.t_mutation_magnitude, self.t_mutation_magnitude)
+        candidate.t = min(max(candidate.t, 0.3), 0.7)
 
         for child in candidate.children:
             self.mutate_individual(child)

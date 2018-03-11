@@ -7,16 +7,15 @@ from core.room import RoomFactory
 
 class SubdivideTreeToFloorplan(object):
 
-    def __init__(self, lot_width, lot_height, list_o_rooms, rootnode):
+    def __init__(self, lot_width, lot_height, list_o_rooms):
         self.lot_width = lot_width
         self.lot_height = lot_height
-        self.rootnode = rootnode
         self.list_o_rooms = list_o_rooms
 
-    def generate_candidate_floorplan(self):
+    def generate_candidate_floorplan(self, rootnode):
         floorplan = FloorPlan([RoomFactory.Rectangle(self.lot_width, self.lot_height)])
         initial_room = floorplan.rooms[0]
-        rootscore = self.subdivide_room(floorplan, initial_room, self.rootnode)
+        rootscore = self.subdivide_room(floorplan, initial_room, rootnode)
 
         # print(f"Root score is {rootscore}")
 
@@ -58,7 +57,7 @@ class SubdivideTreeGenerator(object):
             children=[],
             padding=None,
             order=random.choice([-1, 1]),
-            t=0.5,
+            t=random.uniform(0.25, 0.75),
             room_indexes=list(indexes),
             score=None
         )
@@ -76,7 +75,7 @@ class SubdivideTreeGenerator(object):
             children=[],
             padding=None,
             order=random.choice([-1, 1]),
-            t=0.5,
+            t=random.uniform(0.25, 0.75),
             room_indexes=left,
             score=None
         )
@@ -85,7 +84,7 @@ class SubdivideTreeGenerator(object):
             children=[],
             padding=None,
             order=random.choice([-1, 1]),
-            t=0.5,
+            t=random.uniform(0.25, 0.75),
             room_indexes=right,
             score=None
         )

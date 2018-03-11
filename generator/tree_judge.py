@@ -22,25 +22,27 @@ class TreeJudge(object):
         for i in range(50):
             print("We are evaluating population ", i)
 
-            list_o_rooms = [LivingGroom(4), BedGroom(2), BathGroom(1), BedGroom(2)] + [LivingGroom(4), BedGroom(2), BathGroom(1), BedGroom(2)]
+            list_o_rooms = [BedGroom(2), BathGroom(1)] + [LivingGroom(4), BedGroom(2.25), BathGroom(1), BedGroom(2)]
     # list_o_rooms = list(itertools.chain(list_o_rooms*3))
 
             adam = SubdivideTreeGenerator().generate_tree_from_indexes(
                 range(len(list_o_rooms))
             )
 
+            instantiator = SubdivideTreeToFloorplan(80, 60, list_o_rooms)
+
             salt = GeneticTreeShaker(
                 adam,
-                list_o_rooms
+                list_o_rooms,
+                instantiator
             )
 
-            for i in range(10):
+            for i in range(5):
                 salt.run_generation()
                 import statistics
                 print(f"The best score so far is {statistics.median([tree.score for tree in salt.population])}")
 
-            g = SubdivideTreeToFloorplan(80, 60, list_o_rooms, salt.population[0])
-            fp = g.generate_candidate_floorplan()
+            fp = instantiator.generate_candidate_floorplan(salt.population[0])
 
             # Check the doors
             shaker = GeneticDoorShaker(fp, [ RandomDoorGenerator.create_door_vector(len(fp.edges)) for i in range(20)])

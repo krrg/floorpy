@@ -19,6 +19,9 @@ class LivingGroom(Groom):
     def __init__(self, area):
         super().__init__(area, "Living")
 
+    def tree_score(self, actual_room):
+        return min(0.5, actual_room.min_aspect_ratio) / 0.5
+
 
 class DiningGroom(LivingGroom):
     pass
@@ -26,6 +29,21 @@ class DiningGroom(LivingGroom):
 
 class KitchenGroom(LivingGroom):
     pass
+
+
+class HallwayGroom(Groom):
+
+    def __init__(self, area):
+        super().__init__(area, "Hallway")
+
+    def tree_score(self, actual_room):
+        thin_edge_length = min(actual_room.height, actual_room.width)
+        if thin_edge_length < 7:
+            return (0.1 * thin_edge_length) / 6.0
+        elif thin_edge_length > 8:
+            return 1.0 / (thin_edge_length - 8)
+        else:
+            return 1.0
 
 
 class BedGroom(Groom):
@@ -36,7 +54,7 @@ class BedGroom(Groom):
     def tree_score(self, actual_room):
         multiplier = 1.0
         non_bedgrooms = 0
-        
+
         for neighbor, edge in actual_room.neighbors_and_edges:
             if type(neighbor.groom) is not BedGroom:
                 non_bedgrooms += 1
