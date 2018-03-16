@@ -1,4 +1,5 @@
 from generator.node import Node
+from generator.groom import *
 from bakedrandom import brandom as random
 from core.edge import Orientation
 from core.floorplan import FloorPlan
@@ -39,8 +40,15 @@ class SubdivideTreeToFloorplan(object):
         S = (a1 * (1 - node.t)) / (a1 * (1 - node.t) + a2 * node.t)
 
         # node.orientation = room.orientation.negate()
-
-        roomA, roomB = floorplan.proportional_subdivide(S, node.orientation, room)
+        hallway = node.padding and min(room.width, room.height) >= 21
+        if hallway:
+            rooms = floorplan.proportional_subdivide(S, node.orientation, room, hallway=hallway)
+            roomA, roomB = rooms[0], rooms[1]
+            if len(rooms) > 2:
+                roomHall = rooms[2]
+                roomHall.groom = HallwayGroom()
+        else:
+            roomA, roomB = floorplan.proportional_subdivide(S, node.orientation, room, hallway=hallway)
         # TODO: We are not sure what order these things pop out.
 
         scoreA = self.subdivide_room(floorplan, roomA, children[0])
@@ -55,13 +63,18 @@ class SubdivideTreeGenerator(object):
         rootnode = Node(
             orientation=random.choice([Orientation.Horizontal, Orientation.Vertical]),
             children=[],
-            padding=None,
+            padding=random.choice([True, False]),
             order=random.choice([-1, 1]),
-            t=random.uniform(0.25, 0.75),
+            t=0.5,
             room_indexes=list(indexes),
             score=None
         )
         self.generate_tree(rootnode)
+
+
+        import json
+        print(rootnode)
+
         return rootnode
 
     def generate_tree(self, rootnode):
@@ -73,18 +86,18 @@ class SubdivideTreeGenerator(object):
         left_child = Node(
             orientation=random.choice([Orientation.Horizontal, Orientation.Vertical]),
             children=[],
-            padding=None,
+            padding=random.choice([True, False]),
             order=random.choice([-1, 1]),
-            t=random.uniform(0.25, 0.75),
+            t=0.5,
             room_indexes=left,
             score=None
         )
         right_child = Node(
             orientation=random.choice([Orientation.Horizontal, Orientation.Vertical]),
             children=[],
-            padding=None,
+            padding=random.choice([True, False]),
             order=random.choice([-1, 1]),
-            t=random.uniform(0.25, 0.75),
+            t=0.5,
             room_indexes=right,
             score=None
         )
@@ -97,5 +110,6 @@ class SubdivideTreeGenerator(object):
         random.shuffle(ls)
         slice_index = random.randint(1, len(ls) - 1)
         return ls[:slice_index], ls[slice_index:]
+
 
 

@@ -13,10 +13,24 @@ from generator.tree_judge import TreeJudge
 from generator.random_door_generator import RandomDoorGenerator
 from generator.genetic_door_shaker import GeneticDoorShaker
 from evaluator.door_judge import DoorJudge
+from bakedrandom import brandom as random
+
+def garbage_fire_2():
+
+    list_o_rooms = [BedGroom(2), BedGroom(2), LivingGroom(4), DiningGroom(1)]
+    adam = SubdivideTreeGenerator().generate_tree_from_indexes(
+        range(len(list_o_rooms))
+    )
+    instantiator = SubdivideTreeToFloorplan(80, 60, list_o_rooms)
+    fp = instantiator.generate_candidate_floorplan(adam)
+
+    renderer.svgrenderer.SvgRenderer(fp).render('out/output.svg')
+
 
 def garbage_fire():
 
     fp = TreeJudge().create_perfect_floorplan()
+
 
 
     # door_vector = RandomDoorGenerator.create_door_vector(len(fp.edges))

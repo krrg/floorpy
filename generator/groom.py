@@ -1,4 +1,4 @@
-import random
+from bakedrandom import brandom as random
 import string
 
 class Groom(object):
@@ -24,7 +24,9 @@ class LivingGroom(Groom):
 
 
 class DiningGroom(LivingGroom):
-    pass
+
+    def __init__(self, area):
+        super().__init__(area, "Living")
 
 
 class KitchenGroom(LivingGroom):
@@ -33,8 +35,8 @@ class KitchenGroom(LivingGroom):
 
 class HallwayGroom(Groom):
 
-    def __init__(self, area):
-        super().__init__(area, "Hallway")
+    def __init__(self):
+        super().__init__(0, "Hallway")
 
     def tree_score(self, actual_room):
         thin_edge_length = min(actual_room.height, actual_room.width)

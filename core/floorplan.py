@@ -26,12 +26,21 @@ class FloorPlan(object):
             self.rooms.append(roomB)
             break
 
-    def proportional_subdivide(self, S, direction, room):
-        roomA, roomB = room.proportional_subdivide(S, direction)
+    def proportional_subdivide(self, S, direction, room, hallway=False):
+        if hallway:
+            roomA, roomB, roomHall = room.proportional_subdivide(S, direction, hallway=hallway)
+        else:
+            roomA, roomB = room.proportional_subdivide(S, direction, hallway=hallway)
+            roomHall = None
+
         self.rooms.remove(room)
         self.rooms.append(roomA)
         self.rooms.append(roomB)
-        return roomA, roomB
+        if roomHall is not None:
+            self.rooms.append(roomHall)
+            return roomA, roomB, roomHall
+        else:
+            return roomA, roomB
 
     @property
     def edges(self):

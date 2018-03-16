@@ -200,7 +200,7 @@ class Room(object):
                 y_min = min(y_min, y)
         return x_max, x_min, y_max, y_min
 
-    def proportional_subdivide(self, S_area_percentage, orientation):
+    def proportional_subdivide(self, S_area_percentage, orientation, hallway=False):
         x, y = self.center
         x_max, x_min, y_max, y_min = self.max_min_xy
 
@@ -209,9 +209,32 @@ class Room(object):
         else:
             y = (1 - S_area_percentage) * y_max + S_area_percentage * y_min
 
-        x, y = round(x), round(y)
+        if not hallway:
+            x, y = round(x), round(y)
+            return self.subdivide(np.array([x, y]), orientation.to_unit_vector())
 
-        return self.subdivide(np.array([x, y]), orientation.to_unit_vector())
+        delta_1 = 7 * S_area_percentage
+        delta_2 = 7 * (1 - S_area_percentage)
+
+        if orientation == Orientation.Vertical:
+            x1, x2 = x - delta_1, x + delta_2
+            y1, y2 = y, y
+        else:
+            x1, x2 = x, x
+            y1, y2 = y + delta_2, y - delta_1
+
+        x1, x2, y1, y2 = map(round, [x1, x2, y1, y2])
+
+        if not self.contains((x1, y1)) or not self.contains((x2, y2)):
+            x, y = round(x), round(y)
+            roomA, roomB = self.subdivide(np.array([x, y]), orientation.to_unit_vector())
+            return roomA, roomB, None
+
+        roomA, roomB = self.subdivide(np.array([x1, y1]), orientation.to_unit_vector())
+        roomC, roomD = roomB.subdivide(np.array([x2, y2]), orientation.to_unit_vector())
+
+        return roomA, roomD, roomC
+
 
     @property
     def orientation(self):
