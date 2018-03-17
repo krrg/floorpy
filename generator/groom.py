@@ -13,6 +13,17 @@ class Groom(object):
     def door_score(self, actual_room):
         return 1.0
 
+class JiltedGroom(Groom):
+
+    def __init__(self):
+        super().__init__(0, "Jilted :(")
+
+    def tree_score(self, actual_room):
+        return 0.0
+
+    def door_score(self, actual_room):
+        return 0.0
+
 
 class LivingGroom(Groom):
 

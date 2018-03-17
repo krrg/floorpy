@@ -6,9 +6,9 @@ from core.opening import Door, DoorFactory
 
 class SvgRenderer(object):
 
-    def __init__(self, floorplan, scaling=16):
+    def __init__(self, floorplan,width, height, scaling=16):
         self.floorplan = floorplan
-        self.drawing = svgwrite.Drawing('out/output.svg')
+        self.drawing = svgwrite.Drawing('out/output.svg', size=(width * scaling + 64, height * scaling + 64))
         self.group = svgwrite.container.Group(transform='translate(32,32)')
         self.drawing.add(self.group)
         self.scaling = scaling

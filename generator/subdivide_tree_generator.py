@@ -3,7 +3,7 @@ from generator.groom import *
 from bakedrandom import brandom as random
 from core.edge import Orientation
 from core.floorplan import FloorPlan
-from core.room import RoomFactory
+from core.room import RoomFactory, InvalidSubdivisionException
 
 
 class SubdivideTreeToFloorplan(object):
@@ -48,12 +48,18 @@ class SubdivideTreeToFloorplan(object):
                 roomHall = rooms[2]
                 roomHall.groom = HallwayGroom()
         else:
-            roomA, roomB = floorplan.proportional_subdivide(S, node.orientation, room, hallway=hallway)
+            try:
+                roomA, roomB = floorplan.proportional_subdivide(S, node.orientation, room, hallway=hallway)
+            except InvalidSubdivisionException as e:
+                room.groom = JiltedGroom()
+                node.score = 0.0
+                return node.score
+
         # TODO: We are not sure what order these things pop out.
 
         scoreA = self.subdivide_room(floorplan, roomA, children[0])
         scoreB = self.subdivide_room(floorplan, roomB, children[1])
-        node.score = min(scoreA, scoreB)
+        node.score = (scoreA + scoreB) * 0.5
         return node.score
 
 
@@ -73,7 +79,6 @@ class SubdivideTreeGenerator(object):
 
 
         import json
-        print(rootnode)
 
         return rootnode
 

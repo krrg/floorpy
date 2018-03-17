@@ -1,6 +1,7 @@
 from bakedrandom import brandom as random
 from generator.node import Node
 from generator.subdivide_tree_generator import *
+import copy
 
 class GeneticTreeShaker(object):
 
@@ -26,6 +27,12 @@ class GeneticTreeShaker(object):
         self.instantiator = instantiator
         self.prob_t_mutates = prob_t_mutates
         self.t_mutation_magnitude = t_mutation_magnitude
+
+    def list_nodes(self, candidate):
+        nodes = [candidate]
+        for child in candidate.children:
+            nodes.extend(self.list_nodes(child))
+        return nodes
 
     def run_generation(self):
         candidates = self.crossover_population()
@@ -53,23 +60,33 @@ class GeneticTreeShaker(object):
         return candidates
 
     def crossover_individuals(self, a, b):
-        child = Node(
-            orientation=random.choice([a.orientation, b.orientation]),
-            children=[],
-            padding=random.choice([a.padding, b.padding]),
-            order=random.choice([a.order, b.order]),
-            t=random.choice([a.t, b.t]),  # TODO: This actually needs to flip with the order
-            room_indexes=list(a.room_indexes),
-            score=None,
-        )
+        a, b = copy.deepcopy(a), copy.deepcopy(b)
+        nodesA = self.list_nodes(a)
+        nodesB = self.list_nodes(b)
 
-        for achild, bchild in zip(a.children, b.children):
-            child.children.append(self.crossover_individuals(achild, bchild))
-        return child
+        assert len(nodesA) == len(nodesB)
+
+        random_index = random.randint(0, len(nodesA) - 1)
+
+        subtreeA = nodesA[random_index]
+        subtreeB = nodesB[random_index]
+
+        subtreeA.orientation = subtreeB.orientation
+        subtreeA.children = subtreeB.children
+        subtreeA.padding = subtreeB.padding
+        subtreeA.order = subtreeB.order
+        subtreeA.t = subtreeB.t
+
+        return a
+        # for achild, bchild in zip(a.children, b.children):
+        #     child.children.append(self.crossover_individuals(achild, bchild))
+        # return child
 
     def mutate_candidates(self, candidates):
         for candidate in candidates:
-            self.mutate_individual(candidate)
+            nodes = self.list_nodes(candidate)
+            rand_node = random.choice(nodes)
+            self.mutate_individual(rand_node)
 
     def mutate_individual(self, candidate):
         if random.random() < self.prob_order_mutates:

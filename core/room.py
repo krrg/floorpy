@@ -86,7 +86,8 @@ class Room(object):
         return new_edges
 
     def subdivide(self, p, direction):
-        assert self.contains(p)
+        if not self.contains(p):
+            raise InvalidSubdivisionException()
 
         close_pos_distance = np.inf
         close_pos_edge = []
@@ -210,6 +211,7 @@ class Room(object):
             y = (1 - S_area_percentage) * y_max + S_area_percentage * y_min
 
         if not hallway:
+            # print(x, y, " maxes and mins -> ", self.max_min_xy)
             x, y = round(x), round(y)
             return self.subdivide(np.array([x, y]), orientation.to_unit_vector())
 
@@ -244,25 +246,6 @@ class Room(object):
         return Orientation.Vertical if height > width else Orientation.Horizontal
 
 
-# if __name__ == "__main__":
-
-#     p0 = np.array([0,0])
-#     p1 = np.array([1,0])
-#     p2 = np.array([1,1])
-#     p3 = np.array([0,1])
-
-#     edges = [Edge(p0, p1), Edge(p1, p2), Edge(p2,p3), Edge(p3,p0)]
-#     room = Room(edges)
-
-#     for e in edges:
-#         e.positive = room
-
-#     print(room.contains(np.array([0.5,0.5])))
-#     print(room.contains(np.array([1.5,1.5])))
-
-#     room.subdivide(np.array([0.5,0.5]), np.array([1,0]))
-
-
 class RoomFactory(object):
 
     @staticmethod
@@ -283,3 +266,7 @@ class RoomFactory(object):
             edge.positive = room
 
         return room
+
+
+class InvalidSubdivisionException(Exception):
+    pass

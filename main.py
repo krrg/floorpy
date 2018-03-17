@@ -24,7 +24,7 @@ def garbage_fire_2():
     instantiator = SubdivideTreeToFloorplan(80, 60, list_o_rooms)
     fp = instantiator.generate_candidate_floorplan(adam)
 
-    renderer.svgrenderer.SvgRenderer(fp).render('out/output.svg')
+    renderer.svgrenderer.SvgRenderer(fp, 80, 60).render('out/output.svg')
 
 
 def garbage_fire():
@@ -36,7 +36,7 @@ def garbage_fire():
     # door_vector = RandomDoorGenerator.create_door_vector(len(fp.edges))
     # fp.add_doors(door_vector)
 
-    renderer.svgrenderer.SvgRenderer(fp).render('out/output.svg')
+    renderer.svgrenderer.SvgRenderer(fp, 80, 60).render('out/output.svg')
 
 if __name__ == "__main__":
     # main()
