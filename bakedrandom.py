@@ -1,5 +1,5 @@
 import random
 
-seed = None
+seed = 23553253221
 # seed = None
 brandom = random.Random(seed)

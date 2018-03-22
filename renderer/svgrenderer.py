@@ -14,6 +14,7 @@ class SvgRenderer(object):
         self.scaling = scaling
 
     def render(self, filename, show_edge_connections=False):
+        print("We are outputting svg to ", filename)
         self.render_connectivity_graph()
 
         edges = set()
@@ -50,7 +51,7 @@ class SvgRenderer(object):
         # self.render_door(edge, DoorFactory.interior_door(0.5, -1))
 
     def render_room_label(self, room):
-        print(f"I am looking at room {room.groom.label}")
+        # print(f"I am looking at room {room.groom.label}")
         label = str(room.groom.label).upper() + " " + str(room.area)
         x, y = self.scale_point(room.center)
         self.group.add(

@@ -16,26 +16,22 @@ class SubdivideTreeToFloorplan(object):
     def generate_candidate_floorplan(self, rootnode):
         floorplan = FloorPlan([RoomFactory.Rectangle(self.lot_width, self.lot_height)])
         initial_room = floorplan.rooms[0]
-        rootscore = self.subdivide_room(floorplan, initial_room, rootnode)
-
-        # print(f"Root score is {rootscore}")
-
+        self.subdivide_room(floorplan, initial_room, rootnode)
         return floorplan
 
     def subdivide_room(self, floorplan, room, node):
+
         if len(node.children) <= 1:
             groom = self.list_o_rooms[node.room_indexes[0]]
             room.groom = groom
             node.score = groom.tree_score(room)
-            return node.score
+            return
+            # return node.score
 
         children = node.children[::node.order]
 
         a1 = sum([ self.list_o_rooms[i].area for i in children[0].room_indexes])
         a2 = sum([ self.list_o_rooms[i].area for i in children[1].room_indexes])
-
-        # a1 = len(node.children[0].room_indexes)
-        # a2 = len(node.children[1].room_indexes)
 
         S = (a1 * (1 - node.t)) / (a1 * (1 - node.t) + a2 * node.t)
 
@@ -53,14 +49,12 @@ class SubdivideTreeToFloorplan(object):
             except InvalidSubdivisionException as e:
                 room.groom = JiltedGroom()
                 node.score = 0.0
-                return node.score
+                return
 
-        # TODO: We are not sure what order these things pop out.
-
-        scoreA = self.subdivide_room(floorplan, roomA, children[0])
-        scoreB = self.subdivide_room(floorplan, roomB, children[1])
-        node.score = (scoreA + scoreB) * 0.5
-        return node.score
+        self.subdivide_room(floorplan, roomA, children[0])
+        self.subdivide_room(floorplan, roomB, children[1])
+        # node.score = (scoreA + scoreB) * 0.5
+        # return node.score
 
 
 class SubdivideTreeGenerator(object):
@@ -113,8 +107,12 @@ class SubdivideTreeGenerator(object):
     def partition_list(self, ls):
         ls = list(ls)
         random.shuffle(ls)
-        slice_index = random.randint(1, len(ls) - 1)
-        return ls[:slice_index], ls[slice_index:]
+
+        midpoint = len(ls) // 2
+        return ls[:midpoint], ls[midpoint:]
+
+        # slice_index = random.randint(1, len(ls) - 1)
+        # return ls[:slice_index], ls[slice_index:]
 
 
 

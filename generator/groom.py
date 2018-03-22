@@ -50,13 +50,24 @@ class HallwayGroom(Groom):
         super().__init__(0, "Hallway")
 
     def tree_score(self, actual_room):
-        thin_edge_length = min(actual_room.height, actual_room.width)
-        if thin_edge_length < 7:
-            return (0.1 * thin_edge_length) / 6.0
-        elif thin_edge_length > 8:
-            return 1.0 / (thin_edge_length - 8)
-        else:
-            return 1.0
+        # return None
+
+        # Scored on the basis of how many non-hallway neighbors it has.
+        non_hall_neighbors = 0
+        for neighbor, edge in actual_room.neighbors_and_edges:
+            if edge.length < 8:
+                continue
+            if type(neighbor.groom) is HallwayGroom:
+                continue
+            non_hall_neighbors += 1
+
+        if non_hall_neighbors >= 5:
+            return None
+        elif non_hall_neighbors == 4:
+            return 0.65
+        elif non_hall_neighbors <= 3:
+            return 0
+
 
 
 class BedGroom(Groom):

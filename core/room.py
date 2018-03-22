@@ -215,8 +215,10 @@ class Room(object):
             x, y = round(x), round(y)
             return self.subdivide(np.array([x, y]), orientation.to_unit_vector())
 
-        delta_1 = 7 * S_area_percentage
-        delta_2 = 7 * (1 - S_area_percentage)
+        HALLWAY_WIDTH = 8
+
+        delta_1 = HALLWAY_WIDTH * S_area_percentage
+        delta_2 = HALLWAY_WIDTH * (1 - S_area_percentage)
 
         if orientation == Orientation.Vertical:
             x1, x2 = x - delta_1, x + delta_2

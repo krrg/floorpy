@@ -67,7 +67,7 @@ class FloorPlan(object):
 
         for is_door, edge in zip(door_vector, edge_list):
             if is_door:
-                a, b = edge.t_bounds(4)
+                a, b = edge.t_bounds(3.99)
                 if a is None:
                     continue
 
