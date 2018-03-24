@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<svg baseProfile="full" height="1344" version="1.1" width="1664" xmlns="http://www.w3.org/2000/svg" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs/>
+  <g transform="translate(32,32)">
+    <line stroke="rgb(30,30,30)" stroke-linecap="round" stroke-width="12" x1="1600.0" x2="768.0" y1="512.0" y2="512.0"/>
+    <line stroke="rgb(30,30,30)" stroke-linecap="round" stroke-width="12" x1="1600.0" x2="768.0" y1="272.0" y2="272.0"/>
+    <line stroke="rgb(30,30,30)" stroke-linecap="round" stroke-width="12" x1="1600.0" x2="1104.0" y1="1072.0" y2="1072.0"/>
+    <line stroke="rgb(30,30,30)" stroke-linecap="round" stroke-width="12" x1="1600" x2="1600.0" y1="0" y2="272.0"/>
+    <line stroke="rgb(30,30,30)" stroke-linecap="round" stroke-width="12" x1="1600.0" x2="1600.0" y1="272.0" y2="512.0"/>
+    <line stroke="rgb(30,30,30)" stroke-linecap="round" stroke-width="12" x1="1600.0" x2="1104.0" y1="640.0" y2="640.0"/>
+    <line stroke="rgb(30,30,30)" stroke-linecap="round" stroke-width="12" x1="976.0" x2="976.0" y1="1088.0" y2="640.0"/>
+    <line stroke="rgb(30,30,30)" stroke-linecap="round" stroke-width="12" x1="592.0" x2="592.0" y1="512.0" y2="0.0"/>
+    <line stroke="rgb(30,30,30)" stroke-linecap="round" stroke-width="12" x1="1104.0" x2="1104.0" y1="1280.0" y2="1072.0"/>
+    <line stroke="rgb(30,30,30)" stroke-linecap="round" stroke-width="12" x1="1104.0" x2="976.0" y1="1280.0" y2="1280.0"/>
+    <line stroke="rgb(30,30,30)" stroke-linecap="round" stroke-width="12" x1="1600.0" x2="1600" y1="1072.0" y2="1280"/>
+    <line stroke="rgb(30,30,30)" stroke-linecap="round" stroke-width="12" x1="0.0" x2="0" y1="512.0" y2="0"/>
+    <line stroke="rgb(30,30,30)" stroke-linecap="round" stroke-width="12" x1="1600.0" x2="1600.0" y1="640.0" y2="1072.0"/>
+    <line stroke="rgb(30,30,30)" stroke-linecap="round" stroke-width="12" x1="1104.0" x2="1104.0" y1="1072.0" y2="640.0"/>
+    <line stroke="rgb(30,30,30)" stroke-linecap="round" stroke-width="12" x1="0.0" x2="0.0" y1="640.0" y2="512.0"/>
+    <line stroke="rgb(30,30,30)" stroke-linecap="round" stroke-width="12" x1="592.0" x2="464.0" y1="512.0" y2="512.0"/>
+    <line stroke="rgb(30,30,30)" stroke-linecap="round" stroke-width="12" x1="1104.0" x2="976.0" y1="640.0" y2="640.0"/>
+    <line stroke="rgb(30,30,30)" stroke-linecap="round" stroke-width="12" x1="592.0" x2="768.0" y1="0.0" y2="0.0"/>
+    <line stroke="rgb(30,30,30)" stroke-linecap="round" stroke-width="12" x1="464.0" x2="592.0" y1="0.0" y2="0.0"/>
+    <line stroke="rgb(30,30,30)" stroke-linecap="round" stroke-width="12" x1="976.0" x2="976.0" y1="1280.0" y2="1088.0"/>
+    <line stroke="rgb(30,30,30)" stroke-linecap="round" stroke-width="12" x1="768.0" x2="592.0" y1="512.0" y2="512.0"/>
+    <line stroke="rgb(30,30,30)" stroke-linecap="round" stroke-width="12" x1="464.0" x2="464.0" y1="512.0" y2="0.0"/>
+    <line stroke="rgb(30,30,30)" stroke-linecap="round" stroke-width="12" x1="976.0" x2="0.0" y1="640.0" y2="640.0"/>
+    <line stroke="rgb(30,30,30)" stroke-linecap="round" stroke-width="12" x1="768.0" x2="768.0" y1="272.0" y2="0.0"/>
+    <line stroke="rgb(30,30,30)" stroke-linecap="round" stroke-width="12" x1="464.0" x2="0.0" y1="512.0" y2="512.0"/>
+    <line stroke="rgb(30,30,30)" stroke-linecap="round" stroke-width="12" x1="768.0" x2="1600" y1="0.0" y2="0"/>
+    <line stroke="rgb(30,30,30)" stroke-linecap="round" stroke-width="12" x1="1600" x2="1104.0" y1="1280" y2="1280.0"/>
+    <line stroke="rgb(30,30,30)" stroke-linecap="round" stroke-width="12" x1="0" x2="464.0" y1="0" y2="0.0"/>
+    <line stroke="rgb(30,30,30)" stroke-linecap="round" stroke-width="12" x1="0.0" x2="0.0" y1="1088.0" y2="640.0"/>
+    <line stroke="rgb(30,30,30)" stroke-linecap="round" stroke-width="12" x1="976.0" x2="0" y1="1280.0" y2="1280"/>
+    <line stroke="rgb(30,30,30)" stroke-linecap="round" stroke-width="12" x1="0" x2="0.0" y1="1280" y2="1088.0"/>
+    <line stroke="rgb(30,30,30)" stroke-linecap="round" stroke-width="12" x1="976.0" x2="0.0" y1="1088.0" y2="1088.0"/>
+    <line stroke="rgb(30,30,30)" stroke-linecap="round" stroke-width="12" x1="768.0" x2="768.0" y1="512.0" y2="272.0"/>
+    <line stroke="rgb(30,30,30)" stroke-linecap="round" stroke-width="12" x1="1600.0" x2="1600.0" y1="512.0" y2="640.0"/>
+    <text style="font-family: sans-serif; font-size: 20pt" text-anchor="middle" x="800.0" y="576.0">HALLWAY_598 800.0</text>
+    <text style="font-family: sans-serif; font-size: 20pt" text-anchor="middle" x="1040.0" y="960.0">HALLWAY_826 320.0</text>
+    <text style="font-family: sans-serif; font-size: 20pt" text-anchor="middle" x="488.0" y="1184.0">BEDROOM_450 732.0</text>
+    <text style="font-family: sans-serif; font-size: 20pt" text-anchor="middle" x="488.0" y="864.0">LIVING_44 1708.0</text>
+    <text style="font-family: sans-serif; font-size: 20pt" text-anchor="middle" x="1352.0" y="1176.0">BATH_84 403.0</text>
+    <text style="font-family: sans-serif; font-size: 20pt" text-anchor="middle" x="1352.0" y="856.0">KITCHEN_536 837.0</text>
+    <text style="font-family: sans-serif; font-size: 20pt" text-anchor="middle" x="232.0" y="256.0">DINING_908 928.0</text>
+    <text style="font-family: sans-serif; font-size: 20pt" text-anchor="middle" x="680.0" y="256.0">BATH_616 352.0</text>
+    <text style="font-family: sans-serif; font-size: 20pt" text-anchor="middle" x="528.0" y="256.0">HALLWAY_988 256.0</text>
+    <text style="font-family: sans-serif; font-size: 20pt" text-anchor="middle" x="1184.0" y="392.0">BEDROOM_914 780.0</text>
+    <text style="font-family: sans-serif; font-size: 20pt" text-anchor="middle" x="1184.0" y="136.0">BEDROOM_188 884.0</text>
+  </g>
+</svg>
