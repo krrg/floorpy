@@ -12,8 +12,11 @@ from generator.groom import *
 from generator.tree_judge import PopulationCentrifuge, load_floorplan, FloorplanEvaluator
 from generator.random_door_generator import RandomDoorGenerator
 from generator.genetic_door_shaker import GeneticDoorShaker
+from generator.genetic_weight_frobber import GeneticWeightFrobber
 from evaluator.door_judge import DoorJudge
 from bakedrandom import brandom as random
+import statistics
+import matplotlib.pyplot as plt
 
 
 def garbage_fire():
@@ -23,20 +26,37 @@ def garbage_fire():
     # renderer.svgrenderer.SvgRenderer(fp, 100, 60).render('out/output.svg')
 
 
-def autofrob_tree_evaluator_weights():
-    dna = load_floorplan("out/floorplan-1")
-    weights = TreeWeights(**default_tree_weights)
-
-    weights.scoreCurveExponent = 9
-
-    instantiator = SubdivideTreeToFloorplan(dna.width, dna.height, dna.list_o_rooms, weights)
-    evaluator = FloorplanEvaluator(weights)
-
+def get_floorplan(unfixed_filename):
+    dna = load_floorplan("." + unfixed_filename.replace(".svg", ""))
+    instantiator = SubdivideTreeToFloorplan(dna.width, dna.height, dna.list_o_rooms, TreeWeights(**default_tree_weights))
     fp = instantiator.generate_candidate_floorplan(dna.rootnode)
-    print("here is the score, ", evaluator.score_floorplan(fp))
+    return fp
+
+
+def autofrob_tree_evaluator_weights():
+
+    floorplan_pairs = []
+
+    with open("./scores.txt") as f:
+        lines = f.readlines()
+
+        for line in lines:
+            greater, lesser = line.split()
+            floorplan_pairs.append((get_floorplan(greater), get_floorplan(lesser)))
+
+    frobber = GeneticWeightFrobber(
+        default_tree_weights,
+        floorplan_pairs
+    )
+
+    for i in range(10000):
+        print("Running a generation", i)
+        frobber.run_generation()
+        print(frobber.population[0])
+
 
 if __name__ == "__main__":
     # main()
-    garbage_fire()
-    # autofrob_tree_evaluator_weights()
+    # garbage_fire()
+    autofrob_tree_evaluator_weights()
 

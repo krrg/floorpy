@@ -37,7 +37,7 @@ class FloorplanEvaluator(object):
     def score_floorplan(self, floorplan):
         scores = [ (room.groom.tree_score(room, self.weights), room.groom) for room in floorplan.rooms ]
         scores = [ (score, groom) for score, groom in scores if score is not None ]
-        room_scores = [ (1 - score * groom.tree_weight(self.weights))**self.weights.scoreCurveExponent for score, groom in scores]
+        room_scores = [ (1 - score * groom.tree_weight(self.weights))**2 for score, groom in scores]
         mean_score = sum(room_scores) / len(room_scores)
         return 1 - mean_score
 
