@@ -8,10 +8,11 @@ from core.room import RoomFactory, InvalidSubdivisionException
 
 class SubdivideTreeToFloorplan(object):
 
-    def __init__(self, lot_width, lot_height, list_o_rooms):
+    def __init__(self, lot_width, lot_height, list_o_rooms, weights):
         self.lot_width = lot_width
         self.lot_height = lot_height
         self.list_o_rooms = list_o_rooms
+        self.weights = weights
 
     def generate_candidate_floorplan(self, rootnode):
         floorplan = FloorPlan([RoomFactory.Rectangle(self.lot_width, self.lot_height)])
@@ -24,7 +25,7 @@ class SubdivideTreeToFloorplan(object):
         if len(node.children) <= 1:
             groom = self.list_o_rooms[node.room_indexes[0]]
             room.groom = groom
-            node.score = groom.tree_score(room)
+            node.score = groom.tree_score(room, self.weights)
             return
             # return node.score
 

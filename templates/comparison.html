@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <style>
+            body {
+                background: whitesmoke;
+                color: black;
+            }
+
+            .plans {
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+            }
+
+            .plan {
+                padding: 1em;
+            }
+
+            .plan img {
+                width: 45vw;
+                height: auto;
+            }
+
+            .console {
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+            }
+
+            .console input {
+                font-size: 36pt;
+                font-family: 'Roboto';
+                padding: 1em;
+            }
+
+        </style>
+    </head>
+    <body>
+        <div class="plans">
+            <div class="plan plan1">
+                <h1>Plan 1</h1>
+                <img src="{{ floorplan1}}" />
+            </div>
+
+            <div class="plan plan2">
+                <h1>Plan 2</h1>
+                <img src="{{ floorplan2}}" />
+            </div>
+        </div>
+
+        <div class="console">
+            <form action="/" method="POST">
+                <input type="submit" name="plan" value="Left" />
+                <input type="submit" name="plan" value="Skip" />
+                <input type="submit" name="plan" value="Right" />
+                <input type="hidden" name="plan1" value="{{floorplan1}}" />
+                <input type="hidden" name="plan2" value="{{floorplan2}}" />
+            </form>
+        </div>
+
+        </div>
+    </body>
+</html>

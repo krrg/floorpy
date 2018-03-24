@@ -11,7 +11,6 @@ from generator.random_door_generator import RandomDoorGenerator
 from recordclass import recordclass
 import pickle
 
-
 FloorplanDNA = recordclass('FloorplanDNA', [
     'list_o_rooms',
     'width',
@@ -32,12 +31,13 @@ def load_floorplan(filename):
 
 class FloorplanEvaluator(object):
 
-    def __init__(self):  # TODO: Pass weights into here
-        pass
+    def __init__(self, weights):
+        self.weights = weights
 
     def score_floorplan(self, floorplan):
-        scores = [ room.groom.tree_score(room) for room in floorplan.rooms ]
-        room_scores = [ (1 - score)**2 for score in scores if score is not None]
+        scores = [ (room.groom.tree_score(room, self.weights), room.groom) for room in floorplan.rooms ]
+        scores = [ (score, groom) for score, groom in scores if score is not None ]
+        room_scores = [ (1 - score * groom.tree_weight(self.weights))**self.weights.scoreCurveExponent for score, groom in scores]
         mean_score = sum(room_scores) / len(room_scores)
         return 1 - mean_score
 
@@ -56,10 +56,10 @@ class FloorplanEvaluator(object):
 
 class PopulationCentrifuge(object):
 
-    def __init__(self, width, height):
+    def __init__(self, width, height, weights):
         self.width = width
         self.height = height
-        pass
+        self.weights = weights
 
     def dump_plan(self, fp, door_vector, generation_num, list_o_rooms, width, height, rootnode):
         fp.clear_doors()
@@ -84,26 +84,29 @@ class PopulationCentrifuge(object):
 
         width = self.width
         height = self.height
+        weights = self.weights
 
-        for generation in range(1):
+        for generation in range(500):
             print("We are evaluating population ", generation)
 
-            list_o_rooms = [BedGroom(2), BathGroom(1)] + [LivingGroom(4), BedGroom(2.25), BathGroom(1), BedGroom(2)]
-            list_o_rooms = list(itertools.chain(list_o_rooms*10))
+            list_o_rooms = [LivingGroom(4), DiningGroom(2.5), KitchenGroom(2), BedGroom(1.8), BedGroom(1.8), BedGroom(2.0), BathGroom(1), BathGroom(1)]
+            list_o_rooms = list(itertools.chain(list_o_rooms*1))
 
             adam = SubdivideTreeGenerator().generate_tree_from_indexes(
                 range(len(list_o_rooms))
             )
 
-            instantiator = SubdivideTreeToFloorplan(width, height, list_o_rooms)
+            instantiator = SubdivideTreeToFloorplan(width, height, list_o_rooms, weights)
 
             salt = GeneticTreeShaker(
                 adam,
                 list_o_rooms,
                 instantiator,
-                FloorplanEvaluator(),
+                FloorplanEvaluator(weights),
             )
 
+            duplicate_score = 0
+            max_score = 0
             for i in range(500):
                 salt.run_generation()
                 import statistics
@@ -120,18 +123,28 @@ class PopulationCentrifuge(object):
                 composite_score = salt.population[0].score
                 door_vector = [0]*len(fp.edges)
 
+                if composite_score == max_score:
+                    duplicate_score += 1
+                else:
+                    duplicate_score = 0
+
+                if duplicate_score >= 10:
+                    break
+
                 if composite_score > max_score:
+                    import uuid
                     best_plan = fp, door_vector
                     max_score = composite_score
 
                     self.dump_plan(
                         fp,
                         door_vector,
-                        i,
+                        str(uuid.uuid4()),
                         list_o_rooms,
                         width, height,
                         salt.population[0],
                     )
+
 
                 # renderer.svgrenderer.SvgRenderer(fp).render('out/output.svg')
 

@@ -9,7 +9,7 @@ from evaluator.basic_evals import *
 from generator.genetic_tree_shaker import GeneticTreeShaker
 from generator.subdivide_tree_generator import *
 from generator.groom import *
-from generator.tree_judge import PopulationCentrifuge
+from generator.tree_judge import PopulationCentrifuge, load_floorplan, FloorplanEvaluator
 from generator.random_door_generator import RandomDoorGenerator
 from generator.genetic_door_shaker import GeneticDoorShaker
 from evaluator.door_judge import DoorJudge
@@ -18,15 +18,25 @@ from bakedrandom import brandom as random
 
 def garbage_fire():
 
-    fp = PopulationCentrifuge(300, 200).create_perfect_floorplan()
+    weights = TreeWeights(**default_tree_weights)
+    fp = PopulationCentrifuge(100, 80, weights).create_perfect_floorplan()
+    # renderer.svgrenderer.SvgRenderer(fp, 100, 60).render('out/output.svg')
 
 
+def autofrob_tree_evaluator_weights():
+    dna = load_floorplan("out/floorplan-1")
+    weights = TreeWeights(**default_tree_weights)
 
-    # door_vector = RandomDoorGenerator.create_door_vector(len(fp.edges))
-    # fp.add_doors(door_vector)
+    weights.scoreCurveExponent = 9
 
-    renderer.svgrenderer.SvgRenderer(fp, 300, 200).render('out/output.svg')
+    instantiator = SubdivideTreeToFloorplan(dna.width, dna.height, dna.list_o_rooms, weights)
+    evaluator = FloorplanEvaluator(weights)
+
+    fp = instantiator.generate_candidate_floorplan(dna.rootnode)
+    print("here is the score, ", evaluator.score_floorplan(fp))
 
 if __name__ == "__main__":
     # main()
     garbage_fire()
+    # autofrob_tree_evaluator_weights()
+

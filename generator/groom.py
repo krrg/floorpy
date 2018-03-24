@@ -8,6 +8,13 @@ default_tree_weights = {
     'Bedroom_nonBedroomMultiplier': 0.1,
     'Bedroom_aspectRatioCap': 0.5,
     'Bathroom_aspectRatioCap': 0.75,
+    'LivingGroom_weight': 1.0,
+    'DiningGroom_weight': 1.0,
+    'KitchenGroom_weight': 1.0,
+    'HallwayGroom_weight': 1.0,
+    'BedGroom_weight': 1.0,
+    'BathGroom_weight': 1.0,
+    'scoreCurveExponent': 2.0,
 }
 
 TreeWeights = recordclass('TreeWeights', default_tree_weights.keys())
@@ -25,12 +32,15 @@ class Groom(object):
     def door_score(self, actual_room):
         return 1.0
 
+    def tree_weight(self, weights):
+        return 0
+
 class JiltedGroom(Groom):
 
     def __init__(self):
         super().__init__(0, "Jilted :(")
 
-    def tree_score(self, actual_room):
+    def tree_score(self, actual_room, weights):
         return 0.0
 
     def door_score(self, actual_room):
@@ -39,8 +49,11 @@ class JiltedGroom(Groom):
 
 class LivingGroom(Groom):
 
-    def __init__(self, area):
-        super().__init__(area, "Living")
+    def __init__(self, area, label=None):
+        super().__init__(area, label or "Living")
+
+    def tree_weight(self, weights):
+        return weights.LivingGroom_weight
 
     def tree_score(self, actual_room, weights):
         aspectRatioCap = weights.Living_aspectRatioCap
@@ -50,17 +63,21 @@ class LivingGroom(Groom):
 class DiningGroom(LivingGroom):
 
     def __init__(self, area):
-        super().__init__(area, "Living")
+        super().__init__(area, label="Dining")
 
 
 class KitchenGroom(LivingGroom):
-    pass
 
+    def __init__(self, area):
+        super().__init__(area, label="Kitchen")
 
 class HallwayGroom(Groom):
 
     def __init__(self):
         super().__init__(0, "Hallway")
+
+    def tree_weight(self, weights):
+        return weights.HallwayGroom_weight
 
     def tree_score(self, actual_room, weights):
         # return None
@@ -101,6 +118,9 @@ class BedGroom(Groom):
 
         return multiplier * min(weights.Bedroom_aspectRatioCap, actual_room.min_aspect_ratio) / weights.Bedroom_aspectRatioCap
 
+    def tree_weight(self, weights):
+        return weights.BedGroom_weight
+
     def door_score(self, actual_room):
         door_counter = 0
         multiplier = 1
@@ -133,6 +153,9 @@ class BathGroom(Groom):
     def tree_score(self, actual_room, weights):
         return min(weights.Bathroom_aspectRatioCap, actual_room.min_aspect_ratio) / weights.Bathroom_aspectRatioCap
 
+    def tree_weight(self, weights):
+        return weights.BathGroom_weight
+
     def door_score(self, actual_room):
         door_counter = 0
         multiplier = 1
@@ -144,6 +167,8 @@ class BathGroom(Groom):
         if door_counter == 0:
             return 0
         return multiplier / door_counter
+
+
 
 
 
