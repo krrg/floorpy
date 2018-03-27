@@ -37,7 +37,7 @@ class FloorplanEvaluator(object):
     def score_floorplan(self, floorplan):
         scores = [ (room.groom.tree_score(room, self.weights), room.groom) for room in floorplan.rooms ]
         scores = [ (score, groom) for score, groom in scores if score is not None ]
-        room_scores = [ (1 - score * groom.tree_weight(self.weights))**2 for score, groom in scores]
+        room_scores = [ (1 - score * groom.tree_weight(self.weights))**self.weights.scoreCurveExponent for score, groom in scores]
         mean_score = sum(room_scores) / len(room_scores)
         return 1 - mean_score
 
@@ -86,7 +86,7 @@ class PopulationCentrifuge(object):
         height = self.height
         weights = self.weights
 
-        for generation in range(500):
+        for generation in range(1):
             print("We are evaluating population ", generation)
 
             list_o_rooms = [LivingGroom(4), DiningGroom(2.5), KitchenGroom(2), BedGroom(1.8), BedGroom(1.8), BedGroom(2.0), BathGroom(1), BathGroom(1)]
@@ -128,8 +128,8 @@ class PopulationCentrifuge(object):
                 else:
                     duplicate_score = 0
 
-                if duplicate_score >= 10:
-                    break
+                # if duplicate_score >= 10:
+                #     break
 
                 if composite_score > max_score:
                     import uuid
@@ -139,7 +139,7 @@ class PopulationCentrifuge(object):
                     self.dump_plan(
                         fp,
                         door_vector,
-                        str(uuid.uuid4()),
+                        str(i),
                         list_o_rooms,
                         width, height,
                         salt.population[0],

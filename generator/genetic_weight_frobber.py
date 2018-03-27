@@ -1,8 +1,16 @@
 from bakedrandom import brandom as random
 from generator.tree_judge import FloorplanEvaluator
 from generator.groom import TreeWeights
+import numpy as np
 
 from multiprocessing import Pool
+
+
+# https://stackoverflow.com/questions/34968722
+def softmax(x):
+    e_x = np.exp(x - np.max(x))
+    return e_x / e_x.sum()
+
 
 class GeneticWeightFrobber(object):
 
@@ -11,7 +19,7 @@ class GeneticWeightFrobber(object):
         fp_pairs,
     ):
         self.fp_pairs = fp_pairs
-        self.population = [(initial_weights, float(0))]
+        self.population = [(initial_weights, (0, float('inf')))]
         self.prob_point_mutation = 0.5
         self.prob_inherit_from_b = 0.25
         self.num_candidates = 100
@@ -49,7 +57,21 @@ class GeneticWeightFrobber(object):
             if random.random() <= self.prob_point_mutation:
                 mutant[key] += random.uniform(-0.3, 0.3)
                 mutant[key] = max(0.05, mutant[key])
+        self.normalize_groom_weights(mutant)
+        mutant["scoreCurveExponent"] = max(1, mutant["scoreCurveExponent"])
         return mutant
+
+    def normalize_groom_weights(self, mutant):
+        v = []
+        keys = []
+
+        for key in mutant.keys():
+            if key.endswith("_weight"):
+                keys.append(key)
+                v.append(mutant[key])
+
+        for normalized_weight, key in zip(softmax(np.array(v)), keys):
+            mutant[key] = float(normalized_weight)
 
     def score_candidates(self, candidates):
         evaluator_candidates = [ FloorplanEvaluator(TreeWeights(**w)) for w in candidates ]
@@ -59,6 +81,7 @@ class GeneticWeightFrobber(object):
 
     def evaluate_candidate(self, evaluator):
         correct_count = 0
+        accuracy = 0
         for good, bad in self.fp_pairs:
             good_score = evaluator.score_floorplan(good)
             bad_score = evaluator.score_floorplan(bad)
@@ -66,12 +89,13 @@ class GeneticWeightFrobber(object):
             if good_score >= bad_score:
                 correct_count += 1
             # if bad_score >= good_score:
-            #     correct_count += bad_score - good_score
-        return correct_count
+            accuracy += bad_score - good_score
+
+        return -correct_count, accuracy,
 
     def cull_herd(self, candidates):
         self.population.extend(candidates)
-        self.population.sort(key=lambda x: -x[1])
+        self.population.sort(key=lambda x: x[1])
         self.population = self.population[:self.population_size]
 
 

@@ -57,6 +57,6 @@ def autofrob_tree_evaluator_weights():
 
 if __name__ == "__main__":
     # main()
-    # garbage_fire()
-    autofrob_tree_evaluator_weights()
+    garbage_fire()
+    # autofrob_tree_evaluator_weights()
 
