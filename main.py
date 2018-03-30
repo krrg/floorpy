@@ -56,7 +56,7 @@ def autofrob_tree_evaluator_weights():
 
 
 def manual_score():
-    plan = "/out/floorplan-0b6835f0-b328-48c3-8c5e-1592196cc2ab.svg"
+    plan = "/out/floorplan-2dbc4304-e5e0-4c83-9e88-14ec37a97850.svg"
     fp = get_floorplan(plan)
     evaluator = FloorplanEvaluator(TreeWeights(**default_tree_weights))
     print("The score is ", evaluator.score_floorplan(fp))

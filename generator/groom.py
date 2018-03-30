@@ -129,15 +129,18 @@ class BedGroom(Groom):
             multiplier = weights.Bedroom_nonBedroomMultiplier
 
         is_blocking = False
-        for orientation in [Orientation.Vertical, Orientation.Horizontal]:
-            if actual_room.has_one_none_neighbor(orientation):
-                for neighbor, edge in actual_room.neighbors_and_edges:
-                    if type(neighbor.groom) is BathGroom or type(neighbor.groom) is BedGroom:
-                        if edge.orientation == orientation:
-                            if neighbor.has_one_none_neighbor(orientation):
-                                print("My name is ", actual_room, actual_room.area, " and I am blocking with ", neighbor, neighbor.area, " with a between edge of ", edge.orientation)
-                                is_blocking = True
-                                break
+
+        if not (actual_room.has_one_none_neighbor(Orientation.Vertical) and actual_room.has_one_none_neighbor(Orientation.Horizontal)):
+            for orientation in [Orientation.Vertical, Orientation.Horizontal]:
+                if actual_room.has_one_none_neighbor(orientation):
+                    print("I have only one none neighbor ", actual_room, actual_room.area)
+                    for neighbor, edge in actual_room.neighbors_and_edges:
+                        if type(neighbor.groom) is BathGroom or type(neighbor.groom) is BedGroom:
+                            if edge.orientation == orientation:
+                                if neighbor.has_one_none_neighbor(orientation):
+                                    print("My name is ", actual_room, actual_room.area, " and I am blocking with ", neighbor, neighbor.area, " with a between edge of ", edge.orientation)
+                                    is_blocking = True
+                                    break
 
         if is_blocking:
             multiplier *= weights.BedGroom_splittingHouseBlockerMultiplier
