@@ -55,8 +55,17 @@ def autofrob_tree_evaluator_weights():
         print(frobber.population[0])
 
 
+def manual_score():
+    plan = "/out/floorplan-0b6835f0-b328-48c3-8c5e-1592196cc2ab.svg"
+    fp = get_floorplan(plan)
+    evaluator = FloorplanEvaluator(TreeWeights(**default_tree_weights))
+    print("The score is ", evaluator.score_floorplan(fp))
+
+
+
 if __name__ == "__main__":
+    manual_score()
     # main()
-    garbage_fire()
+    # garbage_fire()
     # autofrob_tree_evaluator_weights()
 

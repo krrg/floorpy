@@ -104,6 +104,13 @@ class Edge(object):
         return is_on(a, b, point)
 
     @property
+    def orientation(self):
+        if abs(np.dot(self.unit_vector, Orientation.Vertical.to_unit_vector())) < 0.01:
+            return Orientation.Horizontal
+        else:
+            return Orientation.Vertical
+
+    @property
     def length(self):
         return np.linalg.norm(self.p1 - self.p0)
 

@@ -85,7 +85,7 @@ class GeneticWeightFrobber(object):
         for good, bad in self.fp_pairs:
             good_score = evaluator.score_floorplan(good)
             bad_score = evaluator.score_floorplan(bad)
-            # print("Good socre: ", good_score, " bad score", bad_score)
+            # print("Good socre: ", good_score, " bad score"z, bad_score)
             if good_score >= bad_score:
                 correct_count += 1
             # if bad_score >= good_score:

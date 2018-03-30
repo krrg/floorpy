@@ -86,7 +86,7 @@ class PopulationCentrifuge(object):
         height = self.height
         weights = self.weights
 
-        for generation in range(1):
+        for generation in range(500):
             print("We are evaluating population ", generation)
 
             list_o_rooms = [LivingGroom(4), DiningGroom(2.5), KitchenGroom(2), BedGroom(1.8), BedGroom(1.8), BedGroom(2.0), BathGroom(1), BathGroom(1)]
@@ -128,8 +128,8 @@ class PopulationCentrifuge(object):
                 else:
                     duplicate_score = 0
 
-                # if duplicate_score >= 10:
-                #     break
+                if duplicate_score >= 12:
+                    break
 
                 if composite_score > max_score:
                     import uuid
@@ -139,7 +139,7 @@ class PopulationCentrifuge(object):
                     self.dump_plan(
                         fp,
                         door_vector,
-                        str(i),
+                        str(uuid.uuid4()),
                         list_o_rooms,
                         width, height,
                         salt.population[0],

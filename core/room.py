@@ -180,10 +180,23 @@ class Room(object):
 
     @property
     def neighbors_and_edges(self):
+        for room, edge in self.all_neighbors_and_edges:
+            if room is not None:
+                yield room, edge
+
+    @property
+    def all_neighbors_and_edges(self):
         for edge in self.edges:
             for room in [edge.positive, edge.negative]:
-                if room is not None:
+                if room is not self:
                     yield room, edge
+
+    def has_one_none_neighbor(self, orientation):
+        count = 0
+        for n, e in self.all_neighbors_and_edges:
+            if e.orientation == orientation and n is None:
+                count += 1
+        return count == 1
 
     @property
     def center(self):
