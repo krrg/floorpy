@@ -2,6 +2,7 @@ import svgwrite
 import itertools
 import numpy as np
 
+from generator.groom import HallwayGroom
 from core.opening import Door, DoorFactory
 
 class SvgRenderer(object):
@@ -19,7 +20,12 @@ class SvgRenderer(object):
 
         edges = set()
         for room in self.floorplan.rooms:
+            self.render_room_fill(room)
             for edge in room.edges:
+                positive_groom = edge.positive.groom if edge.positive is not None else None
+                negative_groom = edge.negative.groom if edge.negative is not None else None
+                if type(positive_groom) is HallwayGroom and type(negative_groom) is HallwayGroom:
+                    continue
                 edges.add(edge)
 
         for edge in edges:
@@ -33,6 +39,14 @@ class SvgRenderer(object):
 
         self.drawing.saveas(filename, pretty=True)
 
+    def render_room_fill(self, room):
+        x_max, x_min, y_max, y_min = room.max_min_xy
+        self.group.add(
+            self.drawing.rect(self.scale_point((x_min, y_min)), self.scale_point((room.width, room.height)), **{
+                "fill": "#" + room.groom.fill_color
+            })
+        )
+
     def scale_point(self, p):
         return p[0]*self.scaling, p[1]*self.scaling
 
@@ -42,7 +56,7 @@ class SvgRenderer(object):
     def render_edge(self, edge):
         p0, p1 = [self.scale_point(p) for p in edge.cartesian_points]
         self.group.add(self.drawing.line(p0, p1, **{
-            "stroke": svgwrite.rgb(30, 30, 30),
+            "stroke": "#595959",
             "stroke-width": 12,
             "stroke-linecap": "round"
         }))
@@ -52,12 +66,12 @@ class SvgRenderer(object):
 
     def render_room_label(self, room):
         # print(f"I am looking at room {room.groom.label}")
-        label = str(room.groom.label).upper() + " " + str(room.area)
+        label = str(room.groom.label).title()
         x, y = self.scale_point(room.center)
         self.group.add(
             self.drawing.text(label, x=[x], y=[y], **{
                 "text-anchor": "middle",
-                "style": "font-family: sans-serif; font-size: 20pt",
+                "style": "font-family: 'Source Code Pro; font-size: 30pt",
             })
         )
 

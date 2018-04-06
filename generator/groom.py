@@ -3,21 +3,28 @@ import string
 from recordclass import recordclass
 from core.edge import Orientation
 
-default_tree_weights = {
-    'Living_aspectRatioCap': 0.5,
-    'Hallway_fourNeighbors': 0.65,
-    'Bedroom_nonBedroomMultiplier': 0.1,
-    'Bedroom_aspectRatioCap': 0.5,
-    'Bathroom_aspectRatioCap': 0.75,
-    'LivingGroom_weight': 1.0,
-    'DiningGroom_weight': 1.0,
-    'KitchenGroom_weight': 1.0,
-    'HallwayGroom_weight': 1.0,
-    'BedGroom_weight': 1.0,
-    'BathGroom_weight': 1.0,
-    'BedGroom_splittingHouseBlockerMultiplier': 0.1,
-    'scoreCurveExponent': 2.0,
-}
+# default_tree_weights = {
+#     'Living_aspectRatioCap': 0.5,
+#     'Hallway_fourNeighbors': 0.65,
+#     'Bedroom_nonBedroomMultiplier': 0.1,
+#     'Bedroom_aspectRatioCap': 0.5,
+#     'Bathroom_aspectRatioCap': 0.75,
+#     'LivingGroom_weight': 1.0,
+#     'DiningGroom_weight': 1.0,
+#     'Dining_aspectRatioCap': 0.5,
+#     'DiningGroom_nearKitchenMultiplier': 1.0,
+#     'DiningGroom_nearHallwayKitchenMultiplier': 0.33,
+#     'DiningGroom_notNearKitchenMultiplier': 0.1,
+#     'KitchenGroom_weight': 1.0,
+#     'Kitchen_aspectRatioCap': 0.5,
+#     'HallwayGroom_weight': 1.0,
+#     'BedGroom_weight': 1.0,
+#     'BathGroom_weight': 1.0,
+#     'BedGroom_splittingHouseBlockerMultiplier': 0.1,
+#     'scoreCurveExponent': 2.0,
+# }
+
+default_tree_weights = {'Living_aspectRatioCap': 0.05, 'Hallway_fourNeighbors': 0.20790439879668016, 'Bedroom_nonBedroomMultiplier': 0.36921504500690355, 'Bedroom_aspectRatioCap': 0.2934761880399466, 'Bathroom_aspectRatioCap': 0.2960097383636481, 'LivingGroom_weight': 0.1621490896405807, 'DiningGroom_weight': 0.14736717146341455, 'Dining_aspectRatioCap': 1.2594209965578913, 'DiningGroom_nearKitchenMultiplier': 1.0524671692516832, 'DiningGroom_nearHallwayKitchenMultiplier': 0.7166278267774514, 'DiningGroom_notNearKitchenMultiplier': 0.6977254789036573, 'KitchenGroom_weight': 0.1908202988425064, 'Kitchen_aspectRatioCap': 0.5879675866162373, 'HallwayGroom_weight': 0.1652031424066998, 'BedGroom_weight': 0.15847587127577276, 'BathGroom_weight': 0.17598442637102588, 'BedGroom_splittingHouseBlockerMultiplier': 0.43251661841623845, 'scoreCurveExponent': 4.782009464914367}
 
 # default_tree_weights = {'Living_aspectRatioCap': 0.1821683604152357, 'Hallway_fourNeighbors': 0.3387275342787624, 'Bedroom_nonBedroomMultiplier': 0.6030077217720116, 'Bedroom_aspectRatioCap': 0.6295374742768074, 'Bathroom_aspectRatioCap': 1.3133567117389542, 'LivingGroom_weight': 0.1610819840974928, 'DiningGroom_weight': 0.160103699429546, 'KitchenGroom_weight': 0.14363177974131605, 'HallwayGroom_weight': 0.15812435712055573, 'BedGroom_weight': 0.21617087013841702, 'BathGroom_weight': 0.1608873094726724, 'scoreCurveExponent': 4.806756928566799}
 
@@ -28,7 +35,8 @@ class Groom(object):
 
     def __init__(self, area, label):
         self.area = area
-        self.label = label + "_" + str(random.randint(0, 999))
+        self.label = label
+        self.fill_color = "eeeeee"
 
     def tree_score(self, actual_room, weights):
         return 1.0
@@ -55,6 +63,7 @@ class LivingGroom(Groom):
 
     def __init__(self, area, label=None):
         super().__init__(area, label or "Living")
+        self.fill_color = "fce5cd"
 
     def tree_weight(self, weights):
         return weights.LivingGroom_weight
@@ -68,25 +77,49 @@ class DiningGroom(LivingGroom):
 
     def __init__(self, area):
         super().__init__(area, label="Dining")
+        self.fill_color = "e6b8af"
 
     def tree_weight(self, weights):
         return weights.DiningGroom_weight
 
-    # def tree_score(self, actual_room, weights):
-    #     return
+    def get_tree_score_multiplier(self, actual_room, weights):
+
+        for n in actual_room.neighbors:
+            if type(n.groom) == KitchenGroom:
+                return weights.DiningGroom_nearKitchenMultiplier
+
+        for n in actual_room.neighbors:
+            if type(n.groom) == HallwayGroom:
+                for n2 in n.neighbors:
+                    if type(n2.groom) == KitchenGroom:
+                        return weights.DiningGroom_nearHallwayKitchenMultiplier
+
+        return weights.DiningGroom_notNearKitchenMultiplier
+
+    def tree_score(self, actual_room, weights):
+        aspectRatioCap = weights.Dining_aspectRatioCap
+        multiplier = self.get_tree_score_multiplier(actual_room, weights)
+        # multiplier = 0.33
+        return multiplier * min(aspectRatioCap, actual_room.min_aspect_ratio) / aspectRatioCap
+
 
 class KitchenGroom(LivingGroom):
 
     def __init__(self, area):
         super().__init__(area, label="Kitchen")
+        self.fill_color = "fff2cc"
 
     def tree_weight(self, weights):
         return weights.KitchenGroom_weight
 
+    def tree_score(self, actual_room, weights):
+        aspectRatioCap = weights.Kitchen_aspectRatioCap
+        return min(aspectRatioCap, actual_room.min_aspect_ratio) / aspectRatioCap
+
 class HallwayGroom(Groom):
 
     def __init__(self):
-        super().__init__(0, "Hallway")
+        super().__init__(0, "")
 
     def tree_weight(self, weights):
         return weights.HallwayGroom_weight
@@ -116,13 +149,16 @@ class BedGroom(Groom):
 
     def __init__(self, area):
         super().__init__(area, "Bedroom")
+        self.fill_color = "d9ead3"
 
     def tree_score(self, actual_room, weights):
         multiplier = 1.0
         non_bedgrooms = 0
 
         for neighbor, edge in actual_room.neighbors_and_edges:
-            if type(neighbor.groom) is not BedGroom:
+            if type(neighbor.groom) is HallwayGroom:
+                non_bedgrooms += 1
+            if type(neighbor.groom) is LivingGroom:
                 non_bedgrooms += 1
 
         if non_bedgrooms == 0:
@@ -133,12 +169,10 @@ class BedGroom(Groom):
         if not (actual_room.has_one_none_neighbor(Orientation.Vertical) and actual_room.has_one_none_neighbor(Orientation.Horizontal)):
             for orientation in [Orientation.Vertical, Orientation.Horizontal]:
                 if actual_room.has_one_none_neighbor(orientation):
-                    print("I have only one none neighbor ", actual_room, actual_room.area)
                     for neighbor, edge in actual_room.neighbors_and_edges:
                         if type(neighbor.groom) is BathGroom or type(neighbor.groom) is BedGroom:
                             if edge.orientation == orientation:
                                 if neighbor.has_one_none_neighbor(orientation):
-                                    print("My name is ", actual_room, actual_room.area, " and I am blocking with ", neighbor, neighbor.area, " with a between edge of ", edge.orientation)
                                     is_blocking = True
                                     break
 
@@ -178,6 +212,7 @@ class BathGroom(Groom):
 
     def __init__(self, area):
         super().__init__(area, "Bath")
+        self.fill_color = "cfe2f3"
 
     def tree_score(self, actual_room, weights):
         return min(weights.Bathroom_aspectRatioCap, actual_room.min_aspect_ratio) / weights.Bathroom_aspectRatioCap

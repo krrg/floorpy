@@ -136,14 +136,14 @@ class PopulationCentrifuge(object):
                     best_plan = fp, door_vector
                     max_score = composite_score
 
-                    self.dump_plan(
-                        fp,
-                        door_vector,
-                        str(uuid.uuid4()),
-                        list_o_rooms,
-                        width, height,
-                        salt.population[0],
-                    )
+            self.dump_plan(
+                best_plan[0],
+                door_vector,
+                str(generation),
+                list_o_rooms,
+                width, height,
+                salt.population[0],
+            )
 
 
                 # renderer.svgrenderer.SvgRenderer(fp).render('out/output.svg')

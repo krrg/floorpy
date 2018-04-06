@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<svg baseProfile="full" height="1344" version="1.1" width="1664" xmlns="http://www.w3.org/2000/svg" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs/>
+  <g transform="translate(32,32)">
+    <rect fill="#eeeeee" height="128.0" width="1600.0" x="0.0" y="640.0"/>
+    <rect fill="#cfe2f3" height="512.0" width="224.0" x="0.0" y="768.0"/>
+    <rect fill="#fff2cc" height="512.0" width="432.0" x="224.0" y="768.0"/>
+    <rect fill="#e6b8af" height="512.0" width="544.0" x="656.0" y="768.0"/>
+    <rect fill="#d9ead3" height="512.0" width="400.0" x="1200.0" y="768.0"/>
+    <rect fill="#d9ead3" height="416.0" width="512.0" x="0.0" y="224.0"/>
+    <rect fill="#cfe2f3" height="224.0" width="512.0" x="0" y="0"/>
+    <rect fill="#d9ead3" height="640.0" width="368.0" x="512.0" y="0.0"/>
+    <rect fill="#fce5cd" height="640.0" width="720.0" x="880.0" y="0.0"/>
+    <line stroke="#595959" stroke-linecap="round" stroke-width="12" x1="1600.0" x2="1600.0" y1="640.0" y2="768.0"/>
+    <line stroke="#595959" stroke-linecap="round" stroke-width="12" x1="512.0" x2="0.0" y1="224.0" y2="224.0"/>
+    <line stroke="#595959" stroke-linecap="round" stroke-width="12" x1="880.0" x2="512.0" y1="640.0" y2="640.0"/>
+    <line stroke="#595959" stroke-linecap="round" stroke-width="12" x1="512.0" x2="0.0" y1="640.0" y2="640.0"/>
+    <line stroke="#595959" stroke-linecap="round" stroke-width="12" x1="1600" x2="1200.0" y1="1280" y2="1280.0"/>
+    <line stroke="#595959" stroke-linecap="round" stroke-width="12" x1="1200.0" x2="656.0" y1="768.0" y2="768.0"/>
+    <line stroke="#595959" stroke-linecap="round" stroke-width="12" x1="224.0" x2="0.0" y1="768.0" y2="768.0"/>
+    <line stroke="#595959" stroke-linecap="round" stroke-width="12" x1="0.0" x2="0" y1="224.0" y2="0"/>
+    <line stroke="#595959" stroke-linecap="round" stroke-width="12" x1="512.0" x2="880.0" y1="0.0" y2="0.0"/>
+    <line stroke="#595959" stroke-linecap="round" stroke-width="12" x1="512.0" x2="512.0" y1="224.0" y2="0.0"/>
+    <line stroke="#595959" stroke-linecap="round" stroke-width="12" x1="656.0" x2="224.0" y1="768.0" y2="768.0"/>
+    <line stroke="#595959" stroke-linecap="round" stroke-width="12" x1="880.0" x2="880.0" y1="640.0" y2="0.0"/>
+    <line stroke="#595959" stroke-linecap="round" stroke-width="12" x1="0.0" x2="0.0" y1="768.0" y2="640.0"/>
+    <line stroke="#595959" stroke-linecap="round" stroke-width="12" x1="0" x2="512.0" y1="0" y2="0.0"/>
+    <line stroke="#595959" stroke-linecap="round" stroke-width="12" x1="656.0" x2="656.0" y1="1280.0" y2="768.0"/>
+    <line stroke="#595959" stroke-linecap="round" stroke-width="12" x1="880.0" x2="1600" y1="0.0" y2="0"/>
+    <line stroke="#595959" stroke-linecap="round" stroke-width="12" x1="1600.0" x2="880.0" y1="640.0" y2="640.0"/>
+    <line stroke="#595959" stroke-linecap="round" stroke-width="12" x1="224.0" x2="0" y1="1280.0" y2="1280"/>
+    <line stroke="#595959" stroke-linecap="round" stroke-width="12" x1="224.0" x2="224.0" y1="1280.0" y2="768.0"/>
+    <line stroke="#595959" stroke-linecap="round" stroke-width="12" x1="0" x2="0.0" y1="1280" y2="768.0"/>
+    <line stroke="#595959" stroke-linecap="round" stroke-width="12" x1="1200.0" x2="1200.0" y1="1280.0" y2="768.0"/>
+    <line stroke="#595959" stroke-linecap="round" stroke-width="12" x1="1600" x2="1600.0" y1="0" y2="640.0"/>
+    <line stroke="#595959" stroke-linecap="round" stroke-width="12" x1="0.0" x2="0.0" y1="640.0" y2="224.0"/>
+    <line stroke="#595959" stroke-linecap="round" stroke-width="12" x1="1600.0" x2="1200.0" y1="768.0" y2="768.0"/>
+    <line stroke="#595959" stroke-linecap="round" stroke-width="12" x1="1600.0" x2="1600" y1="768.0" y2="1280"/>
+    <line stroke="#595959" stroke-linecap="round" stroke-width="12" x1="656.0" x2="224.0" y1="1280.0" y2="1280.0"/>
+    <line stroke="#595959" stroke-linecap="round" stroke-width="12" x1="1200.0" x2="656.0" y1="1280.0" y2="1280.0"/>
+    <line stroke="#595959" stroke-linecap="round" stroke-width="12" x1="512.0" x2="512.0" y1="640.0" y2="224.0"/>
+    <text style="font-family: 'Source Code Pro; font-size: 30pt" text-anchor="middle" x="800.0" y="704.0"/>
+    <text style="font-family: 'Source Code Pro; font-size: 30pt" text-anchor="middle" x="112.0" y="1024.0">Bath</text>
+    <text style="font-family: 'Source Code Pro; font-size: 30pt" text-anchor="middle" x="440.0" y="1024.0">Kitchen</text>
+    <text style="font-family: 'Source Code Pro; font-size: 30pt" text-anchor="middle" x="928.0" y="1024.0">Dining</text>
+    <text style="font-family: 'Source Code Pro; font-size: 30pt" text-anchor="middle" x="1400.0" y="1024.0">Bedroom</text>
+    <text style="font-family: 'Source Code Pro; font-size: 30pt" text-anchor="middle" x="256.0" y="432.0">Bedroom</text>
+    <text style="font-family: 'Source Code Pro; font-size: 30pt" text-anchor="middle" x="256.0" y="112.0">Bath</text>
+    <text style="font-family: 'Source Code Pro; font-size: 30pt" text-anchor="middle" x="696.0" y="320.0">Bedroom</text>
+    <text style="font-family: 'Source Code Pro; font-size: 30pt" text-anchor="middle" x="1240.0" y="320.0">Living</text>
+  </g>
+</svg>
