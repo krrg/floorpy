@@ -29,6 +29,7 @@ Floorplans-24-9.png
 from collections import defaultdict
 import statistics
 from colors import *
+import matplotlib.pyplot as plt
 
 
 class FloorplanCsvAnalyzer(object):
@@ -49,21 +50,33 @@ class FloorplanCsvAnalyzer(object):
                     continue
                 image_to_scores[question_image_order[i]].append(int(value))
 
+        # return [ (image_to_scores[k], k) for k in image_to_scores.keys() ]
         return sorted([(statistics.mean(image_to_scores[k]), k) for k in image_to_scores.keys() ])
 
     def display_computer_vs_human(self):
         averages = self.compute_average_csv()
         score_to_filenum = [ (score, int(filename.replace("Floorplans-24-", "").replace(".png", ""))) for score, filename in averages ]
 
+        human, computer = [], []
+
         for score, filenum in score_to_filenum:
             if filenum < 12:
+                # computer.extend(score)
                 print(color(f"{score}, {filenum}", bg='green', fg='black'))
             else:
+                # human.extend(score)
+
                 print(color(f"{score}, {filenum}", bg='orange', fg='black'))
+
+        # plt.hist(human, bins=7)
+        # plt.figure()
+
+        # plt.hist(computer, bins=7)
+        # plt.show()
 
 
 
 if __name__ == "__main__":
-    averages = FloorplanCsvAnalyzer("input.csv").display_computer_vs_human()
+    averages = FloorplanCsvAnalyzer("input2.csv").display_computer_vs_human()
     print('\n'.join(map(str, averages)))
 

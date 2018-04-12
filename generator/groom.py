@@ -103,6 +103,13 @@ class DiningGroom(LivingGroom):
         return multiplier * min(aspectRatioCap, actual_room.min_aspect_ratio) / aspectRatioCap
 
 
+class CustomGroom(LivingGroom):
+
+    def __init__(self, area, label, color):
+        super().__init__(area, label=label)
+        self.fill_color = color
+
+
 class KitchenGroom(LivingGroom):
 
     def __init__(self, area):
