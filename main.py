@@ -22,7 +22,7 @@ import matplotlib.pyplot as plt
 def garbage_fire():
 
     weights = TreeWeights(**default_tree_weights)
-    fp = PopulationCentrifuge(1600, 800, weights).create_perfect_floorplan()
+    fp = PopulationCentrifuge(120, 80, weights).create_perfect_floorplan()
     # renderer.svgrenderer.SvgRenderer(fp, 100, 60).render('out/output.svg')
 
 

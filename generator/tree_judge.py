@@ -86,23 +86,23 @@ class PopulationCentrifuge(object):
         height = self.height
         weights = self.weights
 
-        for generation in range(1):
+        for generation in range(100):
             print("We are evaluating population ", generation)
 
-            # list_o_rooms = [LivingGroom(4), DiningGroom(2.5), KitchenGroom(2)]
-            list_o_rooms = []
-            list_o_rooms += [ BedGroom(1.9) ] * 71
-            list_o_rooms += [ LivingGroom(4.0) ] * 20
-            list_o_rooms += [ DiningGroom(2.5) ] * 20
-            list_o_rooms += [ CustomGroom(1.5, "Breakfast", "d3dfb8") ] * 15
-            list_o_rooms += [ CustomGroom(1.5, "Snacking", "f7a9a8") ] * 15
-            list_o_rooms += [ CustomGroom(1.5, "Standing", "717ec3") ] * 20
-            list_o_rooms += [ CustomGroom(5.0, "Ballroom", "b79ab7") ] * 10
-            list_o_rooms += [ BathGroom(1.0) ] * 20
-            list_o_rooms += [ KitchenGroom(2.0) ] * 20
-            list_o_rooms += [ CustomGroom(1.33, "No Purpose", "f7e1d7") ] * 30
+            # list_o_rooms = [LivingGroom(4), DiningGroom(2.5), KitchenGroom(2), BedGroom(1.9)]
+            # list_o_rooms = []
+            # list_o_rooms += [ BedGroom(1.9) ] * 71
+            # list_o_rooms += [ LivingGroom(4.0) ] * 20
+            # list_o_rooms += [ DiningGroom(2.5) ] * 20
+            # list_o_rooms += [ CustomGroom(1.5, "Breakfast", "d3dfb8") ] * 15
+            # list_o_rooms += [ CustomGroom(1.5, "Snacking", "f7a9a8") ] * 15
+            # list_o_rooms += [ CustomGroom(1.5, "Standing", "717ec3") ] * 20
+            # list_o_rooms += [ CustomGroom(5.0, "Ballroom", "b79ab7") ] * 10
+            # list_o_rooms += [ BathGroom(1.0) ] * 20
+            # list_o_rooms += [ KitchenGroom(2.0) ] * 20
+            # list_o_rooms += [ CustomGroom(1.33, "No Purpose", "f7e1d7") ] * 30
 
-            # list_o_rooms = [LivingGroom(4), DiningGroom(2.5), KitchenGroom(2), BedGroom(1.8), BedGroom(1.8), BedGroom(2.0), BathGroom(1), BathGroom(1)]
+            list_o_rooms = [LivingGroom(4), DiningGroom(2.5), KitchenGroom(2), BedGroom(1.8), BedGroom(1.8), BedGroom(2.0), BathGroom(1), BathGroom(1)]
             list_o_rooms = list(itertools.chain(list_o_rooms*1))
 
             adam = SubdivideTreeGenerator().generate_tree_from_indexes(
@@ -120,7 +120,7 @@ class PopulationCentrifuge(object):
 
             duplicate_score = 0
             max_score = 0
-            for i in range(15000):
+            for i in range(500):
                 salt.run_generation()
                 import statistics
                 print(f"The best score so far is {max([tree.score for tree in salt.population])}")
@@ -128,13 +128,7 @@ class PopulationCentrifuge(object):
                 fp = instantiator.generate_candidate_floorplan(salt.population[0])
 
                 # Check the doors
-                # shaker = GeneticDoorShaker(fp, [ RandomDoorGenerator.create_door_vector(len(fp.edges)) for i in range(20)])
-                # for j in range(200):
-                #     shaker.run_generation()
-
-
                 composite_score = salt.population[0].score
-                door_vector = [0]*len(fp.edges)
 
                 if composite_score == max_score:
                     duplicate_score += 1
@@ -146,17 +140,22 @@ class PopulationCentrifuge(object):
 
                 if composite_score > max_score:
                     import uuid
-                    best_plan = fp, door_vector
+                    best_plan = fp, None
                     max_score = composite_score
 
-                    self.dump_plan(
-                        best_plan[0],
-                        door_vector,
-                        str(i),
-                        list_o_rooms,
-                        width, height,
-                        salt.population[0],
-                    )
+            shaker = GeneticDoorShaker(fp, [ RandomDoorGenerator.create_door_vector(len(fp.edges)) for i in range(20)])
+            for j in range(200):
+                shaker.run_generation()
+            door_vector = shaker.population[0].vector
+
+            self.dump_plan(
+                best_plan[0],
+                door_vector,
+                str(generation),
+                list_o_rooms,
+                width, height,
+                salt.population[0],
+            )
 
 
                 # renderer.svgrenderer.SvgRenderer(fp).render('out/output.svg')

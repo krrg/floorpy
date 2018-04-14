@@ -50,8 +50,8 @@ class FloorplanCsvAnalyzer(object):
                     continue
                 image_to_scores[question_image_order[i]].append(int(value))
 
-        # return [ (image_to_scores[k], k) for k in image_to_scores.keys() ]
-        return sorted([(statistics.mean(image_to_scores[k]), k) for k in image_to_scores.keys() ])
+        return [ (image_to_scores[k], k) for k in image_to_scores.keys() ]
+        # return sorted([(statistics.mean(image_to_scores[k]), k) for k in image_to_scores.keys() ])
 
     def display_computer_vs_human(self):
         averages = self.compute_average_csv()
@@ -59,14 +59,27 @@ class FloorplanCsvAnalyzer(object):
 
         human, computer = [], []
 
-        for score, filenum in score_to_filenum:
-            if filenum < 12:
-                # computer.extend(score)
-                print(color(f"{score}, {filenum}", bg='green', fg='black'))
-            else:
-                # human.extend(score)
+        with open('out/id_source_score.csv', 'w') as f:
+            f.write("ID,SOURCE,SCORE\n")
 
-                print(color(f"{score}, {filenum}", bg='orange', fg='black'))
+            for scores, filenum in score_to_filenum:
+                print(scores)
+                source = "machine" if filenum < 12 else "human"
+                for score in scores:
+                    f.write(f"plan-{filenum},{source},{score}\n")
+
+                mean_score = statistics.mean(scores)
+
+                if source == "machine":
+                    # print(color(f"{mean_score}, {filenum}", bg='green', fg='black'))
+                else:
+                    # print(color(f"{mean_score}, {filenum}", bg='orange', fg='black'))
+
+
+
+
+
+
 
         # plt.hist(human, bins=7)
         # plt.figure()
@@ -78,5 +91,4 @@ class FloorplanCsvAnalyzer(object):
 
 if __name__ == "__main__":
     averages = FloorplanCsvAnalyzer("input2.csv").display_computer_vs_human()
-    print('\n'.join(map(str, averages)))
 

@@ -17,7 +17,9 @@ class DoorJudge(object):
     def score_connectivity(self, fp):
         islands = self.get_connectivity_islands(fp)
         largest_island = len(max(islands, key=lambda i: len(i)))
-        return (largest_island / len(fp.rooms))**2
+        connectivity_score = (largest_island / len(fp.rooms))**2
+        connectivity_score *= 1.0 if self.outside_door_exists(fp) else 0.5
+        return connectivity_score
 
     def score_individual_doors(self, fp):
         door_score = 0
@@ -28,6 +30,13 @@ class DoorJudge(object):
 
         door_score /= len(fp.rooms)
         return door_score
+
+    def outside_door_exists(self, fp):
+        for edge in fp.edges:
+            for door in edge.doors:
+                if edge.positive is None or edge.negative is None:
+                    return True
+        return False
 
     def get_connectivity_islands(self, fp):
         rooms = set(fp.rooms)

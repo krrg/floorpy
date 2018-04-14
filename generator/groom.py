@@ -42,7 +42,12 @@ class Groom(object):
         return 1.0
 
     def door_score(self, actual_room):
-        return 1.0
+        for neighbor, edge in actual_room.all_neighbors_and_edges:
+            for door in edge.doors:
+                if neighbor is None:
+                    return 0
+        return 1
+
 
     def tree_weight(self, weights):
         return 0
@@ -71,6 +76,9 @@ class LivingGroom(Groom):
     def tree_score(self, actual_room, weights):
         aspectRatioCap = weights.Living_aspectRatioCap
         return min(aspectRatioCap, actual_room.min_aspect_ratio) / aspectRatioCap
+
+    def door_score(self, actual_room):
+        return 1.0
 
 
 class DiningGroom(LivingGroom):
@@ -102,6 +110,13 @@ class DiningGroom(LivingGroom):
         # multiplier = 0.33
         return multiplier * min(aspectRatioCap, actual_room.min_aspect_ratio) / aspectRatioCap
 
+    def door_score(self, actual_room):
+        for neighbor, edge in actual_room.all_neighbors_and_edges:
+            for door in edge.doors:
+                if neighbor is None:
+                    return 0
+        return 1
+
 
 class CustomGroom(LivingGroom):
 
@@ -122,6 +137,13 @@ class KitchenGroom(LivingGroom):
     def tree_score(self, actual_room, weights):
         aspectRatioCap = weights.Kitchen_aspectRatioCap
         return min(aspectRatioCap, actual_room.min_aspect_ratio) / aspectRatioCap
+
+    def door_score(self, actual_room):
+        for neighbor, edge in actual_room.all_neighbors_and_edges:
+            for door in edge.doors:
+                if neighbor is None:
+                    return 0
+        return 1
 
 class HallwayGroom(Groom):
 
@@ -149,6 +171,9 @@ class HallwayGroom(Groom):
             return weights.Hallway_fourNeighbors
         elif non_hall_neighbors <= 3:
             return 0
+
+    def door_score(self, actual_room):
+        return 1
 
 
 
@@ -192,6 +217,11 @@ class BedGroom(Groom):
         return weights.BedGroom_weight
 
     def door_score(self, actual_room):
+        for neighbor, edge in actual_room.all_neighbors_and_edges:
+            for door in edge.doors:
+                if neighbor is None:
+                    return 0
+
         door_counter = 0
         multiplier = 1
         for neighbor, edge in actual_room.neighbors_and_edges:
@@ -205,6 +235,12 @@ class BedGroom(Groom):
             # Penalize bedroom to bedroom
             if type(neighbor.groom) is BedGroom:
                 multiplier = 0.1
+
+            if type(neighbor.groom) is KitchenGroom:
+                multiplier = 0.5
+
+            if type(neighbor.groom) is DiningGroom:
+                multiplier = 0.5
 
             door_counter += len(edge.doors)
             if edge.opposite_room(actual_room) is None and len(edge.doors) > 0:

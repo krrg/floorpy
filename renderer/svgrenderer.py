@@ -7,7 +7,7 @@ from core.opening import Door, DoorFactory
 
 class SvgRenderer(object):
 
-    def __init__(self, floorplan,width, height, scaling=4):
+    def __init__(self, floorplan,width, height, scaling=16):
         self.floorplan = floorplan
         self.drawing = svgwrite.Drawing('out/output.svg', size=(width * scaling + 64, height * scaling + 64))
         self.group = svgwrite.container.Group(transform='translate(32,32)')
@@ -68,7 +68,7 @@ class SvgRenderer(object):
         # print(f"I am looking at room {room.groom.label}")
         label = str(room.groom.label).title()
         x, y = self.scale_point(room.center)
-        fontsize = 32
+        fontsize = 30
         self.group.add(
             self.drawing.text(label, x=[x], y=[y], **{
                 "text-anchor": "middle",
